@@ -13,7 +13,7 @@ public class NDOSConsoleReader implements Runnable {
   @Override
   public void run() {
     try{
-      Terminal terminal = TerminalBuilder.builder().system(true).build();
+      Terminal terminal = TerminalBuilder.builder().build();
       LineReader lineReader = LineReaderBuilder.builder().terminal(terminal).build();
 
       while(true) {

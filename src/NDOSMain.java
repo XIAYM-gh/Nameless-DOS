@@ -13,7 +13,7 @@ public class NDOSMain {
     if(!x.has("windows-force-jansi-enabled")) x.put("windows-force-jansi-enabled", "false");
     x.save();
 
-    String os = System.getProperty("os.name").toLowerCase();;
+    String os = System.getProperty("os.name").toLowerCase();
 
     if(x.get("windows-force-jansi-enabled", "false").equals("true") || !os.contains("windows")) NDOSAPI.JANSI_ENABLED = true;
 
