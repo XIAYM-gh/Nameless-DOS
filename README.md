@@ -2,11 +2,16 @@
 这个项目是从 [NDOS](https://cmd.xinv.ink/) 还原来的.
 
 #### 编译
-请使用 jdk 11+<br>
+请使用 jdk 17+<br>
 依赖分别为:
  - /json.jar
  - /jline3.jar
  - /jansi.jar
+
+#### 运行
+下载链接: [ndos.jar](https://asset.xiaym.ml/ndos.jar)<br>
+运行时请使用java 17，运行命令为:<br>
+> java -jar ndos.jar
 
 #### 特性
  - 支持使用插件扩展功能
