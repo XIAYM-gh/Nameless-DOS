@@ -4,9 +4,13 @@ import cn.xiaym.ndos.console.*;
 import cn.xiaym.utils.*;
 import cn.xiaym.ndos.plugins.*;
 
+import org.fusesource.jansi.AnsiConsole;
+
 public class NDOSMain {
   public static void main(String[] args){
     showInfo();
+
+    AnsiConsole.systemInstall();
 
     Logger.info("正在加载插件..");
     PluginMain.init();
