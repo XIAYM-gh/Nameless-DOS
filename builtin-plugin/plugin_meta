@@ -1,0 +1,31 @@
+plugin.name=Nameless DOS 基础组件
+plugin.version=1.0
+plugin.author=XIAYM
+plugin.desc=基础命令库
+plugin.main-class=ndosplugin.main
+plugin.commands=["exit", "version", "plugins", "help", "set", "echo", "status"]
+
+cmd.exit.reg-name=EXIT
+cmd.exit.desc=退出 NDOS
+cmd.exit.tips=正常退出 NDOS
+
+cmd.version.reg-name=VERSION
+cmd.version.desc=显示 NDOS 的版本
+
+cmd.plugins.reg-name=PLUGINS
+cmd.plugins.desc=显示当前已加载的插件列表
+
+cmd.help.reg-name=HELP
+cmd.help.desc=显示帮助
+cmd.help.usage=help [命令名]
+
+cmd.set.reg-name=SET
+cmd.set.desc=设置或显示一个临时的环境变量
+cmd.set.usage=set key=value\nset key
+
+cmd.echo.reg-name=ECHO
+cmd.echo.desc=向控制台输出文字
+cmd.echo.usage=echo [参数] <内容>\n - 可指定参数:\n --format\t格式化mc颜色字符(§)
+
+cmd.status.reg-name=STATUS
+cmd.status.desc=显示NDOS的状态

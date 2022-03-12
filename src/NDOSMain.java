@@ -1,0 +1,29 @@
+package cn.xiaym.ndos;
+
+import cn.xiaym.ndos.console.*;
+import cn.xiaym.utils.*;
+import cn.xiaym.ndos.plugins.*;
+
+public class NDOSMain {
+  public static void main(String[] args){
+    showInfo();
+
+    Logger.info("正在加载插件..");
+    PluginMain.init();
+    Logger.info("插件加载完成!");
+
+    //开启读取线程
+    new Thread(new NDOSConsoleReader()).start();
+  }
+
+  public static void exit() {
+    System.out.println();
+    System.out.flush();
+    System.exit(0);
+  }
+
+  public static void showInfo() {
+    Logger.info("Nameless DOS [版本 1.0.0-JR]");
+    Logger.info("(C) 2022 Nameless Software Team 保留所有权利。");
+  }
+}

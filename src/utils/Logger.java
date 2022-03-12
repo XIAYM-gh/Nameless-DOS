@@ -1,0 +1,91 @@
+package cn.xiaym.utils;
+
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.text.*;
+
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color.*;
+
+public class Logger {
+  public static void out(String str, String type, String typecolor, String textcolor){
+    String[] str_split = str.split("\n");
+    for(String str_:str_split){
+      String time = new SimpleDateFormat("HH:mm:ss").format(new Date(System.currentTimeMillis()));
+
+      System.out.println("\r["+time+" "+ansi().fgBright(ConvertColor(typecolor)).bold().a(type).reset()+"] "+ansi().fgBright(ConvertColor(textcolor)).a(str_).reset());
+    }
+
+    Logger.flush();
+  }
+
+  public static void info(Object obj){
+    Logger.out(String.valueOf(obj), "INFO", "default", "default");
+  }
+
+  public static void warn(Object obj){
+    Logger.out(String.valueOf(obj), "WARN", "yellow", "yellow");
+  }
+
+  public static void err(Object obj){
+    Logger.out(String.valueOf(obj), "ERROR", "red", "red");
+  }
+
+  public static void success(Object obj){
+    Logger.out(String.valueOf(obj), "INFO", "default", "green");
+  }
+
+  public static void flush(){
+    System.out.flush();
+    System.err.flush();
+    System.out.print("\r> ");
+  }
+
+  public static Color ConvertColor(String colorName){
+    switch(colorName.toLowerCase()){
+      case "red":
+        return RED;
+      case "blue":
+        return BLUE;
+      case "purple":
+      case "magenta":
+        return MAGENTA;
+      case "black":
+        return BLACK;
+      case "white":
+        return WHITE;
+      case "yellow":
+        return YELLOW;
+      case "cyan":
+      case "grey":
+        return CYAN;
+      case "green":
+        return GREEN;
+      case "default":
+        return DEFAULT;
+      default:
+        return DEFAULT;
+    }
+  }
+
+  public static void Test(){
+    Logger.Test("default");
+    Logger.Test("red");
+    Logger.Test("blue");
+    Logger.Test("purple");
+    Logger.Test("black");
+    Logger.Test("white");
+    Logger.Test("yellow");
+    Logger.Test("cyan");
+    Logger.Test("green");
+  }
+
+  public static void Test(String color){
+    Logger.out(color + " test", "TESTING", "blue", color);
+  }
+
+  public static void outByRender(String r){
+    System.out.println(ansi().render(r));
+  }
+}
