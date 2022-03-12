@@ -8,9 +8,18 @@ import org.fusesource.jansi.AnsiConsole;
 
 public class NDOSMain {
   public static void main(String[] args){
-    showInfo();
+    xconfig x = new xconfig("config.properties");
+
+    if(!x.has("windows-force-jansi-enabled")) x.put("windows-force-jansi-enabled", "false");
+    x.save();
+
+    String os = System.getProperty("os.name").toLowerCase();;
+
+    if(x.get("windows-force-jansi-enabled", "false").equals("true") || !os.contains("windows")) NDOSAPI.JANSI_ENABLED = true;
 
     AnsiConsole.systemInstall();
+
+    showInfo();
 
     Logger.info("正在加载插件..");
     PluginMain.init();
