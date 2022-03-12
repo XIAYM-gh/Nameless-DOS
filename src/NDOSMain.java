@@ -30,7 +30,7 @@ public class NDOSMain {
   }
 
   public static void showInfo() {
-    Logger.info("Nameless DOS [版本 1.0.0-JR]");
+    Logger.info("Nameless DOS [版本 "+NDOSAPI.NDOS_VERSION+"]");
     Logger.info("(C) 2022 Nameless Software Team 保留所有权利。");
   }
 }
