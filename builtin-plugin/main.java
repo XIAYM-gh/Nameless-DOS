@@ -10,9 +10,13 @@ import cn.xiaym.utils.*;
 import java.util.*;
 import java.lang.management.*;
 
+import static org.fusesource.jansi.Ansi.*;
+
 public class main extends JavaPlugin {
   
   @Override public void onCommand(String cmd){
+    cmd = cmd.toLowerCase();
+
     if(cmd.startsWith("exit")) {
       NDOSMain.exit();
     } else if(cmd.startsWith("version")) {
@@ -35,6 +39,23 @@ public class main extends JavaPlugin {
       processEcho(cmd);
     } else if(cmd.startsWith("status")) {
       showStatus();
+    } else if(cmd.startsWith("change-log")) {
+      showChangeLog();
+    } else if(cmd.startsWith("clear")) {
+      try {
+        System.console().flush();
+        String os = System.getProperty("os.name").toLowerCase();
+        if(os.contains("windows")) {
+          new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        } else if(os.contains("linux")) {
+          new ProcessBuilder("clear").inheritIO().start().waitFor();
+        } else Logger.info(ansi().eraseScreen().toString());
+      } catch(Exception e) {
+        Logger.err("清除屏幕失败!");
+        ErrorUtil.trace(e);
+      }
+
+      Logger.success("清除屏幕成功!");
     }
   }
 
@@ -104,5 +125,12 @@ public class main extends JavaPlugin {
     Info("§a已加载类总数: \t§e" + classLoad.getLoadedClassCount() + " §f(" + classLoad.getUnloadedClassCount() + " 个类已卸载)");
     Info("§a已注册命令数: \t§e" + NDOSCommand.commandsCount());
     Info("§a已加载插件数: \t§e" + PluginMain.getPlugins().size());
+  }
+
+  public void showChangeLog() {
+    Info("§6 ====== 版本更新日志 ====== ");
+    Info("§7[§a+§7]§f 增加插件事件 onDisable() 支持");
+    Info("§7[§b+§7]§f 修复部分大写命令无法执行");
+    Info("§7[§a+§7]§f 增加 clear 命令");
   }
 }

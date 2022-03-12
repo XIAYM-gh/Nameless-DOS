@@ -17,6 +17,13 @@ public class NDOSMain {
   }
 
   public static void exit() {
+    for(JavaPlugin p : PluginMain.getPlugins()) {
+      try {
+        p.onDisable();
+      } catch(Exception e) {
+        ErrorUtil.trace(e);
+      }
+    }
     System.out.println();
     System.out.flush();
     System.exit(0);

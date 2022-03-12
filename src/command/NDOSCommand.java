@@ -26,9 +26,11 @@ public class NDOSCommand {
   }
 
   public static void deleteCommand(String cmd) {
-    RegisteredCommands.remove(cmd.toLowerCase());
-    CommandUsage.remove(cmd.toLowerCase());
-    CommandTips.remove(cmd.toLowerCase());
+    cmd = cmd.toLowerCase();
+
+    RegisteredCommands.remove(cmd);
+    CommandUsage.remove(cmd);
+    CommandTips.remove(cmd);
   }
 
   public static int commandsCount(){
@@ -56,6 +58,8 @@ public class NDOSCommand {
   }
 
   public static void showHelp(String cmd) {
+    cmd = cmd.toLowerCase();
+
     if(cmd.equals("help")) {
       Info("§6====== 命令帮助 ======");
       for(String cm : RegisteredCommands.keySet()) {
