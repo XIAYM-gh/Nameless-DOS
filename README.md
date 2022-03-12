@@ -10,7 +10,7 @@
 
 #### 特性
  - 支持使用插件扩展功能
- - 支持[使用MC格式化字符](/XIAYM-gh/Nameless-DOS/blob/main/src/utils/McColorFormatter.java)(§)
+ - 支持[使用MC格式化字符](https://github.com/XIAYM-gh/Nameless-DOS/blob/main/src/utils/McColorFormatter.java)(§)
 
 <br>
 
