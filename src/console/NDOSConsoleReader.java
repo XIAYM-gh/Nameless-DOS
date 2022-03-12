@@ -2,6 +2,7 @@ package cn.xiaym.ndos.console;
 
 import cn.xiaym.utils.*;
 import cn.xiaym.ndos.command.*;
+import cn.xiaym.ndos.*;
 
 import org.jline.terminal.*;
 import org.jline.reader.*;
@@ -29,7 +30,7 @@ public class NDOSConsoleReader implements Runnable {
     } catch(UserInterruptException|EndOfFileException e) {
       System.out.println();
       System.out.flush();
-      System.exit(0);
+      NDOSMain.exit();
     } catch(Exception e) {
       ErrorUtil.trace(e);
       System.exit(-1);
