@@ -18,7 +18,7 @@ public class Logger {
 
       if(!NDOSAPI.JANSI_ENABLED) {
         //String REGEX_STR = "\\x1b(\\[.*?[@-~]|\\].*?(\\x07|\\x1b\\\\))";
-        System.out.println("\r["+time+" "+type+"] "+str.replaceAll(String.valueOf((char) 0x1b), "^["));
+        System.out.println("\r["+time+" "+type+"] "+str.replaceAll(String.valueOf((char) 0x1b), "b"));
         return;
       }
 
