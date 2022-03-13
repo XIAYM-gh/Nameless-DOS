@@ -17,8 +17,8 @@ public class Logger {
       String time = new SimpleDateFormat("HH:mm:ss").format(new Date(System.currentTimeMillis()));
 
       if(!NDOSAPI.JANSI_ENABLED) {
-        String REGEX_STR = "\\x1b(\\[.*?[@-~]|\\].*?(\\x07|\\x1b\\\\))";
-        System.out.println("\r["+time+" "+type+"] "+str.replaceAll(REGEX_STR, ""));
+        //String REGEX_STR = "\\x1b(\\[.*?[@-~]|\\].*?(\\x07|\\x1b\\\\))";
+        System.out.println("\r["+time+" "+type+"] "+str.replaceAll(String.valueOf((char) 0x1b), "^["));
         return;
       }
 
