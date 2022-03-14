@@ -7,6 +7,7 @@ import java.text.*;
 
 import cn.xiaym.ndos.*;
 
+import org.fusesource.jansi.*;
 import static org.fusesource.jansi.Ansi.*;
 import static org.fusesource.jansi.Ansi.Color.*;
 
@@ -18,7 +19,7 @@ public class Logger {
 
       if(!NDOSAPI.JANSI_ENABLED) {
         String REGEX_STR = "\\x1b(\\[.*?[@-~]|\\].*?(\\x07|\\x1b\\\\))";
-        System.out.println("\r["+time+" "+type+"] "+str.replaceAll(REGEX_STR, ""));
+        AnsiConsole.out().println("\r["+time+" "+type+"] "+str.replaceAll(REGEX_STR, ""));
         return;
       }
 
