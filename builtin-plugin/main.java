@@ -15,13 +15,13 @@ import static org.fusesource.jansi.Ansi.*;
 public class main extends JavaPlugin {
   
   @Override public void onCommand(String cmd){
-    cmd = cmd.toLowerCase();
+    String cmd_ = cmd.toLowerCase();
 
-    if(cmd.startsWith("exit")) {
+    if(cmd_.startsWith("exit")) {
       NDOSMain.exit();
-    } else if(cmd.startsWith("version")) {
+    } else if(cmd_.startsWith("version")) {
       NDOSMain.showInfo();
-    } else if(cmd.startsWith("plugins")) {
+    } else if(cmd_.startsWith("plugins")) {
       int i = 1;
       Logger.info("====== 插件列表 ======");
       for(JavaPlugin p:PluginMain.getPlugins()) {
@@ -31,17 +31,17 @@ public class main extends JavaPlugin {
         Logger.info(i + ". " + p.getName() + " - v" + version + " - by " + author);
         i++;
       }
-    } else if(cmd.startsWith("help")) {
+    } else if(cmd_.startsWith("help")) {
       NDOSCommand.showHelp(cmd);
-    } else if(cmd.startsWith("set")) {
+    } else if(cmd_.startsWith("set")) {
       processSet(cmd);
-    } else if(cmd.startsWith("echo")) {
+    } else if(cmd_.startsWith("echo")) {
       processEcho(cmd);
-    } else if(cmd.startsWith("status")) {
+    } else if(cmd_.startsWith("status")) {
       showStatus();
-    } else if(cmd.startsWith("change-log")) {
+    } else if(cmd_.startsWith("change-log")) {
       showChangeLog();
-    } else if(cmd.startsWith("clear")) {
+    } else if(cmd_.startsWith("clear")) {
       try {
         System.console().flush();
         String os = System.getProperty("os.name").toLowerCase();

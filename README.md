@@ -7,6 +7,11 @@
  - /json.jar
  - /jline3.jar
  - /jansi.jar
+<br>
+编译时，请一并编译 builtin-plugins 文件夹内的main.java<br>
+JAR 目录结构:<br>
+> META-INF<br>cn<br>org<br>ndosplugin
+>> main.class<br>plugin_meta
 
 #### 运行
 下载链接: [ndos.jar](https://asset.xiaym.ml/ndos.jar)<br>
