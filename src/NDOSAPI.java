@@ -8,5 +8,4 @@ public class NDOSAPI {
   //默认 ""
   public static String COMMAND_PREFIX = "";
   public static int NDOS_INNER_VERSION = 1;
-  public static boolean JANSI_ENABLED = false;
 }

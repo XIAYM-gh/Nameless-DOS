@@ -17,13 +17,13 @@ public class Logger {
     for(String str_:str_split){
       String time = new SimpleDateFormat("HH:mm:ss").format(new Date(System.currentTimeMillis()));
 
-      if(!NDOSAPI.JANSI_ENABLED) {
+      /*if(!NDOSAPI.JANSI_ENABLED) {
         String REGEX_STR = "\\x1b(\\[.*?[@-~]|\\].*?(\\x07|\\x1b\\\\))";
         AnsiConsole.out().println("\r["+time+" "+type+"] "+str.replaceAll(REGEX_STR, ""));
         return;
-      }
+      }*/
 
-      System.out.println("\r["+time+" "+ansi().fgBright(ConvertColor(typecolor)).bold().a(type).reset()+"] "+ansi().fgBright(ConvertColor(textcolor)).a(str_).reset());
+      AnsiConsole.out().println("\r["+time+" "+ansi().fgBright(ConvertColor(typecolor)).bold().a(type).reset()+"] "+ansi().fgBright(ConvertColor(textcolor)).a(str_).reset());
     }
 
     Logger.flush();

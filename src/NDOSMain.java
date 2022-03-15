@@ -10,18 +10,18 @@ public class NDOSMain {
   public static void main(String[] args){
     xconfig x = new xconfig("config.properties");
 
-    if(!x.has("windows-force-jansi-enabled")) x.put("windows-force-jansi-enabled", "false");
-    if(!x.has("win-notification-ignored")) x.put("win-notification-ignored", "false");
+    //if(!x.has("windows-force-jansi-enabled")) x.put("windows-force-jansi-enabled", "false");
+    //if(!x.has("win-notification-ignored")) x.put("win-notification-ignored", "false");
     x.save();
 
-    String os = System.getProperty("os.name").toLowerCase();
+    /*String os = System.getProperty("os.name").toLowerCase();
 
     if(x.get("windows-force-jansi-enabled", "false").equals("true") || !os.contains("windows")) NDOSAPI.JANSI_ENABLED = true;
     if(!NDOSAPI.JANSI_ENABLED && x.get("win-notification-ignored","false").equals("false")) {
       Logger.warn("检测到您正处于Windows环境，我们已经禁用颜色输出，如果您正在使用其他终端，请确认它可以显示ANSI颜色后在同目录的config.properties里打开 windows-force-jansi-enabled 项，此消息将不会再显示.");
       x.put("win-notification-ignored", "true");
       x.save();
-    }
+    }*/
 
     AnsiConsole.systemInstall();
 
