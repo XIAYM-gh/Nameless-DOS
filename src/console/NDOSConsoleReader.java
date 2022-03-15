@@ -26,7 +26,8 @@ public class NDOSConsoleReader implements Runnable {
         String line = lineReader.readLine("");
 
         if(line.length() > 0) {
-          NDOSCommand.NDOSCommandParser.parse(line);
+          //实现命令托管
+          NDOSCommand.NDOSCommandParser.parse(NDOSAPI.COMMAND_PREFIX + line);
         }
 
         Logger.flush();

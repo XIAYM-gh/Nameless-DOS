@@ -48,7 +48,7 @@ public class Logger {
   public static void flush(){
     System.out.flush();
     System.err.flush();
-    System.out.print("\r> ");
+    System.out.print("\r" + NDOSAPI.PROMPT_STRING);
   }
 
   public static Color ConvertColor(String colorName){
