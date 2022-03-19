@@ -30,11 +30,12 @@ public class xconfig {
                     for(String item:props){
                         lines.put(LinesCount, item);
                         if(!item.startsWith("#") && item.contains("=")){
-                                String key=item.substring(0,item.indexOf("="));
-                                String value=item.substring(key.length()+1);
-                                this.props.put(key,value);
-                                this.lineTrace.put(key,LinesCount);
+                              String key=item.substring(0,item.indexOf("="));
+                              String value=item.substring(key.length()+1);
+                              this.props.put(key,value);
+                              this.lineTrace.put(key,LinesCount);
                         }
+
                         LinesCount++;
                     }
                   }

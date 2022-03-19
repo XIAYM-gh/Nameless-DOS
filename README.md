@@ -30,7 +30,4 @@ ndosplugin文件夹内内容:<br>
 #### 特性
  - 支持使用插件扩展功能
  - 支持[使用MC格式化字符](https://github.com/XIAYM-gh/Nameless-DOS/blob/main/src/utils/McColorFormatter.java)(§)
-
-<br>
-
-> 待补充...
+ - 自动格式化配置文件

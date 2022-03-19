@@ -5,7 +5,7 @@ plugin.desc=基础命令库
 plugin.id=builtinPlugin
 plugin.main-class=ndosplugin.main
 # commands中填写命令id, cmd.命令id.reg-name中填入要注册的命令
-plugin.commands=["exit", "version", "changeLog", "plugins", "help", "set", "echo", "status", "clear"]
+plugin.commands=["exit", "version", "plugins", "help", "set", "echo", "status", "clear"]
 
 cmd.exit.reg-name=EXIT
 cmd.exit.desc=退出 NDOS
@@ -13,9 +13,6 @@ cmd.exit.tips=正常退出 NDOS
 
 cmd.version.reg-name=VERSION
 cmd.version.desc=显示 NDOS 的版本
-
-cmd.changeLog.reg-name=CHANGE-LOG
-cmd.changeLog.desc=显示当前版本的更新日志
 
 cmd.plugins.reg-name=PLUGINS
 cmd.plugins.desc=显示当前已加载的插件列表

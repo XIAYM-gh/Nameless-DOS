@@ -40,8 +40,6 @@ public class main extends JavaPlugin {
       Echo(cmd);
     } else if(cmd_.startsWith("status")) {
       showStatus();
-    } else if(cmd_.startsWith("change-log")) {
-      showChangeLog();
     } else if(cmd_.startsWith("clear")) {
       try {
         System.console().flush();
@@ -128,10 +126,4 @@ public class main extends JavaPlugin {
     Info("§a已加载插件数: \t§e" + PluginMain.getPlugins().size());
   }
 
-  public void showChangeLog() {
-    Info("§6 ====== 版本更新日志 ====== ");
-    Info("§7[§a+§7]§f 增加插件事件 onDisable() 支持");
-    Info("§7[§b+§7]§f 修复部分大写命令无法执行");
-    Info("§7[§a+§7]§f 增加 clear 命令");
-  }
 }
