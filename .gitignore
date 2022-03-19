@@ -1,4 +1,4 @@
-config.properties
+/config.properties
 *.sh
-ndos.jar
-./plugins
+/ndos.jar
+/plugins/

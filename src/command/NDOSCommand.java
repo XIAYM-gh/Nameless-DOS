@@ -62,7 +62,7 @@ public class NDOSCommand {
 
     if(cmd.equals("help")) {
       Info("§6====== 命令帮助 ======");
-      for(String cm : RegisteredCommands.keySet()) {
+      for(String cm : new TreeMap<>(RegisteredCommands).keySet()) {
         Info("§9" + cm + " §r- §f" + RegisteredCommands.get(cm));
       }
     } else {

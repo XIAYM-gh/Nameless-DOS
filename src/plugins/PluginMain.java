@@ -43,7 +43,6 @@ public class PluginMain {
     int fl_size = pluginJars.size();
 
     for (int i=1;i<=fl_size;i++) {
-      Logger.info("("+i+"/"+fl_size+") " + pluginJars.get(i-1).getName());
       try{
         URLClassLoader u = new URLClassLoader(new URL[]{ pluginJars.get(i-1).toURI().toURL() });
         InputStream is = u.getResourceAsStream("plugin_meta");
@@ -52,6 +51,7 @@ public class PluginMain {
           if(plugin != null){
             Plugins.add(plugin);
             try{
+              Logger.info("("+i+"/"+fl_size+") " + plugin.getName());
               plugin.onEnable();
             } catch(Exception e_PluginOnEnable) {
               Logger.err("无法执行插件的onEnable方法.");
@@ -59,6 +59,7 @@ public class PluginMain {
             }
           }
         } else {
+          Logger.info("("+i+"/"+fl_size+") " + pluginJars.get(i-1).getName());
           Logger.err("无法在 "+pluginJars.get(i-1).getName()+" 中找到 /plugin_meta 文件!");
         }
       } catch(Exception e) {
