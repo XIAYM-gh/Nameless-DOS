@@ -10,8 +10,10 @@ import cn.xiaym.ndos.command.*;
 public class PluginMain {
   private static ArrayList<JavaPlugin> Plugins = new ArrayList<>();
   private static ClassLoader cl = new NullClass().getClass().getClassLoader();
+  private static boolean inited = false;
 
   public static void init(){
+    if(inited) return;
     //加载内置组件包
     try{
       InputStream in = cl.getResourceAsStream("ndosplugin/plugin_meta");
@@ -64,9 +66,11 @@ public class PluginMain {
         ErrorUtil.trace(e);
       }
     }
+
+    inited = true;
   }
 
-  public static JavaPlugin initPlugin(InputStream is, ClassLoader u, String fileName) {
+  private static JavaPlugin initPlugin(InputStream is, ClassLoader u, String fileName) {
     try{
       String randId = RandomIDGenerator.generate(16);
       Properties pc = new Properties();
