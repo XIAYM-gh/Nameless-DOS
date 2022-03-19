@@ -28,15 +28,16 @@ public class main extends JavaPlugin {
         String name = p.getName();
         String author = p.getAuthor();
         String version = p.getVersion();
-        Logger.info(i + ". " + p.getName() + " - v" + version + " - by " + author);
+        String id = p.getID();
+        Logger.info(i + ". " + p.getName() + " (" + id + ") - v" + version + " - by " + author);
         i++;
       }
     } else if(cmd_.startsWith("help")) {
       NDOSCommand.showHelp(cmd);
     } else if(cmd_.startsWith("set")) {
-      processSet(cmd);
+      Set(cmd);
     } else if(cmd_.startsWith("echo")) {
-      processEcho(cmd);
+      Echo(cmd);
     } else if(cmd_.startsWith("status")) {
       showStatus();
     } else if(cmd_.startsWith("change-log")) {
@@ -59,7 +60,7 @@ public class main extends JavaPlugin {
     }
   }
 
-  public void processSet(String cmd) {
+  public void Set(String cmd) {
     if(cmd.trim().equals("set")) {
       Logger.info("变量列表:");
       for(String key:EnvVariables.getVarList()){
@@ -83,7 +84,7 @@ public class main extends JavaPlugin {
     EnvVariables.set(args[0], arg.substring(args[0].length() + 1));
   }
 
-  public void processEcho(String cmd) {
+  public void Echo(String cmd) {
     boolean useFormatter = false;
     if(cmd.trim().equals("echo")) {
       Logger.info("");

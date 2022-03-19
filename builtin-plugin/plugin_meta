@@ -2,6 +2,7 @@ plugin.name=Nameless DOS 基础组件
 plugin.version=1.0
 plugin.author=XIAYM
 plugin.desc=基础命令库
+plugin.id=builtinPlugin
 plugin.main-class=ndosplugin.main
 # commands中填写命令id, cmd.命令id.reg-name中填入要注册的命令
 plugin.commands=["exit", "version", "changeLog", "plugins", "help", "set", "echo", "status", "clear"]
