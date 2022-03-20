@@ -11,7 +11,7 @@ public class RandomIDGenerator {
   }
 
   public static String generate(int len) {
-    if(len > 100) len = 100;
+    if(len > 256) len = 256;
 
     String returnStr = "";
     idList = new ArrayList<>();
@@ -21,8 +21,9 @@ public class RandomIDGenerator {
       idList.add(String.valueOf(idStr.charAt(i)));
     }
 
+    Random r = new Random();
+
     for(i=0;i<=len;i++) {
-      Random r = new Random();
       returnStr += idList.get(r.nextInt(idList.size()));
     }
 
