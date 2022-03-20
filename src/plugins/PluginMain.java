@@ -80,12 +80,12 @@ public class PluginMain {
       JavaPlugin p = (JavaPlugin) clazz.getDeclaredConstructor().newInstance();
       p.setName(pc.getProperty("plugin.name", fileName));
       p.setVersion(pc.getProperty("plugin.version", "1.0.0"));
-      p.setAuthor(pc.getProperty("plugin.author", "Unknown"));
-      p.setDesc(pc.getProperty("plugin.desc", "A Plugin"));
+      p.setAuthor(pc.getProperty("plugin.author", "Nameless"));
+      p.setDesc(pc.getProperty("plugin.desc", "无描述"));
       if (pc.getProperty("plugin.id") == null) Logger.warn("插件 \"" + p.getName() + "\" 的ID为空，正在使用随机id: " + randId);
       p.setID(pc.getProperty("plugin.id", randId));
 
-      NDOSCommand.processPlugin(pc);
+      NDOSCommand.processPlugin(pc, p.getID());
       return p;
     } catch(ClassNotFoundException|NoSuchMethodException e) {
       Logger.err("无法找到插件主类，请检查插件的配置文件!");
