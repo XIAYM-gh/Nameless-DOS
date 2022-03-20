@@ -23,7 +23,7 @@ public class RandomIDGenerator {
 
     Random r = new Random();
 
-    for(i=0;i<=len;i++) {
+    for(i=0;i<len;i++) {
       returnStr += idList.get(r.nextInt(idList.size()));
     }
 
