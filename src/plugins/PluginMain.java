@@ -51,7 +51,7 @@ public class PluginMain {
           if(plugin != null){
             Plugins.add(plugin);
             try{
-              Logger.info("("+i+"/"+fl_size+") " + plugin.getName());
+              Logger.info("("+i+"/"+fl_size+") " + plugin.getName() + " v" + plugin.getVersion());
               plugin.onEnable();
             } catch(Exception e_PluginOnEnable) {
               Logger.err("无法执行插件的onEnable方法.");
