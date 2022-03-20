@@ -23,26 +23,26 @@ public class Logger {
         return;
       }*/
 
-      AnsiConsole.out().println("\r["+time+" "+ansi().fgBright(ConvertColor(typecolor)).bold().a(type).reset()+"] "+ansi().fgBright(ConvertColor(textcolor)).a(str_).reset());
+      AnsiConsole.out().println("\r"+time+" ["+ansi().fgBright(ConvertColor(typecolor)).bold().a(type).reset()+"] "+ansi().fgBright(ConvertColor(textcolor)).a(str_).reset());
     }
 
     Logger.flush();
   }
 
   public static void info(Object obj){
-    Logger.out(String.valueOf(obj), "INFO", "default", "default");
+    Logger.out(String.valueOf(obj), "I", "default", "default");
   }
 
   public static void warn(Object obj){
-    Logger.out(String.valueOf(obj), "WARN", "yellow", "yellow");
+    Logger.out(String.valueOf(obj), "W", "yellow", "yellow");
   }
 
   public static void err(Object obj){
-    Logger.out(String.valueOf(obj), "ERROR", "red", "red");
+    Logger.out(String.valueOf(obj), "E", "red", "red");
   }
 
   public static void success(Object obj){
-    Logger.out(String.valueOf(obj), "INFO", "default", "green");
+    Logger.out(String.valueOf(obj), "I", "default", "green");
   }
 
   public static void flush(){

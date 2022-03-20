@@ -119,7 +119,7 @@ public class main extends JavaPlugin {
     ThreadMXBean thread = ManagementFactory.getThreadMXBean();
 
     Info("§6 ====== NDOS 状态 ======");
-    Info("§a已用内存: \t§e" + headMemory.getUsed() / MB + " MB");
+    Info("§a已用内存: \t\t§e" + headMemory.getUsed() / MB + " MB");
     Info("§a当前线程数: \t§e" + thread.getThreadCount()); 
     Info("§a已加载类总数: \t§e" + classLoad.getLoadedClassCount() + " §f(" + classLoad.getUnloadedClassCount() + " 个类已卸载)");
     Info("§a已注册命令数: \t§e" + NDOSCommand.commandsCount());
