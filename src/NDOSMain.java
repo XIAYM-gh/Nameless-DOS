@@ -12,13 +12,12 @@ public class NDOSMain {
 
     if(x.get("configuration-formatting", "true").equals("true")) ConfigFormatter.doFormat();
 
-
     AnsiConsole.systemInstall();
 
     showInfo();
 
     Logger.info("正在加载插件..");
-    PluginMain.init();
+    PluginMain.init(false);
     Logger.info("插件加载完成!");
 
     //开启读取线程

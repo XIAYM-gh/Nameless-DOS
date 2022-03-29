@@ -5,7 +5,7 @@ plugin.desc=基础命令库
 plugin.id=builtinPlugin
 plugin.main-class=ndosplugin.main
 # commands中填写命令id, cmd.命令id.reg-name中填入要注册的命令
-plugin.commands=["exit", "version", "plugins", "help", "set", "echo", "status", "clear"]
+plugin.commands=["exit", "version", "plugins", "help", "set", "echo", "status", "clear", "script"]
 
 cmd.exit.reg-name=EXIT
 cmd.exit.desc=退出 NDOS
@@ -34,3 +34,7 @@ cmd.status.desc=显示 NDOS 的状态
 
 cmd.clear.reg-name=CLEAR
 cmd.clear.desc=清除屏幕上的内容
+
+cmd.script.reg-name=SCRIPT
+cmd.script.desc=运行外部脚本
+cmd.script.usage=script <脚本文件路径>

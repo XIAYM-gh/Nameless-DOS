@@ -21,59 +21,59 @@ public class JavaPlugin extends PluginCore {
   private String desc;
   private String id;
 
-  public void info(Object obj){
+  public final void info(Object obj){
     Logger.info("[%s] %s".replaceFirst("%s",this.name).replaceFirst("%s",String.valueOf(obj)));
   }
 
-  public void warn(Object obj){
+  public final void warn(Object obj){
     Logger.warn("[%s] %s".replaceFirst("%s",this.name).replaceFirst("%s",String.valueOf(obj)));
   }
 
-  public void err(Object obj){
+  public final void err(Object obj){
     Logger.err("[%s] %s".replaceFirst("%s",this.name).replaceFirst("%s",String.valueOf(obj)));
   }
 
-  public void success(Object obj){
+  public final void success(Object obj){
     Logger.success("[%s] %s".replaceFirst("%s",this.name).replaceFirst("%s",String.valueOf(obj)));
   }
 
-  public void setName(String name){
+  public final void setName(String name){
     this.name = name;
   }
 
-  public void setVersion(String version){
+  public final void setVersion(String version){
     this.version = version;
   }
 
-  public void setAuthor(String author){
+  public final void setAuthor(String author){
     this.author = author;
   }
 
-  public void setDesc(String desc){
+  public final void setDesc(String desc){
     this.desc = desc;
   }
 
-  public void setID(String id){
+  public final void setID(String id){
     this.id = id;
   }
 
-  public String getName(){
+  public final String getName(){
     return this.name;
   }
 
-  public String getVersion(){
+  public final String getVersion(){
     return this.version;
   }
 
-  public String getAuthor(){
+  public final String getAuthor(){
     return this.author;
   }
 
-  public String getDesc(){
+  public final String getDesc(){
     return this.desc;
   }
 
-  public String getID(){
+  public final String getID(){
     return this.id;
   }
 }

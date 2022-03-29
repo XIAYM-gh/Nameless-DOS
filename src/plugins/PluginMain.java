@@ -12,7 +12,7 @@ public class PluginMain {
   private static ClassLoader cl = new NullClass().getClass().getClassLoader();
   private static boolean inited = false;
 
-  public static void init(){
+  public static void init(Boolean BeSilent){
     if(inited) return;
     //加载内置组件包
     try{
@@ -51,7 +51,7 @@ public class PluginMain {
           if(plugin != null){
             Plugins.add(plugin);
             try{
-              Logger.info("("+i+"/"+fl_size+") " + plugin.getName() + " v" + plugin.getVersion());
+              if(!BeSilent) Logger.info("("+i+"/"+fl_size+") " + plugin.getName() + " v" + plugin.getVersion());
               plugin.onEnable();
             } catch(Exception e_PluginOnEnable) {
               Logger.err("无法执行插件的onEnable方法.");
@@ -59,7 +59,7 @@ public class PluginMain {
             }
           }
         } else {
-          Logger.info("("+i+"/"+fl_size+") " + pluginJars.get(i-1).getName());
+          if(!BeSilent) Logger.info("("+i+"/"+fl_size+") " + pluginJars.get(i-1).getName());
           Logger.err("无法在 "+pluginJars.get(i-1).getName()+" 中找到 /plugin_meta 文件!");
         }
       } catch(Exception e) {
@@ -74,10 +74,13 @@ public class PluginMain {
   private static JavaPlugin initPlugin(InputStream is, ClassLoader u, String fileName) {
     try{
       String randId = RandomIDGenerator.generate(16);
+
       Properties pc = new Properties();
       pc.load(new InputStreamReader(is, "UTF-8"));
+
       Class<?> clazz = u.loadClass(pc.getProperty("plugin.main-class"));
       JavaPlugin p = (JavaPlugin) clazz.getDeclaredConstructor().newInstance();
+
       p.setName(pc.getProperty("plugin.name", fileName));
       p.setVersion(pc.getProperty("plugin.version", "1.0.0"));
       p.setAuthor(pc.getProperty("plugin.author", "Nameless"));

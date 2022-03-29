@@ -52,9 +52,16 @@ public class main extends JavaPlugin {
       } catch(Exception e) {
         Logger.err("清除屏幕失败!");
         ErrorUtil.trace(e);
+        return;
       }
 
       Logger.success("清除屏幕成功!");
+    } else if(cmd_.startsWith("script")) {
+      if(cmd.length() <= 7) {
+        Logger.warn("未知用法，请使用help script查看用法");
+        return;
+      }
+      File2Command.run(cmd.substring(7));
     }
   }
 
