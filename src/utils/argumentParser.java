@@ -82,7 +82,4 @@ public class argumentParser {
     return toArgStr(args_);
   }
 
-  static {
-    System.out.println(toArgStr(parse("doge \"awa\"")));
-  }
 }
