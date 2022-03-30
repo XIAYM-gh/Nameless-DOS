@@ -30,8 +30,22 @@ public class File2Command {
           NDOSCommand.NDOSCommandParser.parse(line);
         }
       }
+
+      linec = 0;
+      lines = null;
     } catch(IOException e) {
       Logger.err("错误: " + e.getMessage());
+    } catch(StackOverflowError|ArrayIndexOutOfBoundsException e) {
+      Logger.err("严重错误: 内存可能不足");
+      Logger.err("请检查此脚本是否有不停调用自己的行为");
+      Logger.info("正在尝试释放内存..");
+      System.gc();
     }
+
+    file = null;
+    System.gc();
+    try{
+      Thread.sleep(5);
+    } catch(InterruptedException e) {}
   }
 }

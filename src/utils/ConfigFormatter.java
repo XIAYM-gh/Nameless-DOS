@@ -1,5 +1,7 @@
 package cn.xiaym.utils;
 
+import java.util.*;
+
 public class ConfigFormatter {
   public static void doFormat() {
     xconfig x = new xconfig("config.properties");
@@ -14,7 +16,11 @@ public class ConfigFormatter {
     xNew.newLine("");
 
     xNew.newCommentLine("其它配置");
-    for(String key:x.keySet()) {
+
+    Set<String> set = xNew.keySet();
+    set.remove("configuration-formatting");
+
+    for(String key:set) {
       xNew.put(key, x.get(key, ""));
     }
 
