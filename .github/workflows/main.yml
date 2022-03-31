@@ -28,14 +28,14 @@ jobs:
       - name: Decompress JSON
         uses: TonyBogdanov/zip@1.0
         with:
-            args: unzip -qq ./json.jar -d ./
+            args: unzip -qq -o ./json.jar -d ./
 
       - name: Decompress JLINE3
         uses: TonyBogdanov/zip@1.0
         with:
-            args: unzip -qq ./jline3.jar -d ./
+            args: unzip -qq -o ./jline3.jar -d ./
 
       - name: Decompress JANSI
         uses: TonyBogdanov/zip@1.0
         with:
-            args: unzip -qq ./jansi.jar -d ./
+            args: unzip -qq -o ./jansi.jar -d ./
