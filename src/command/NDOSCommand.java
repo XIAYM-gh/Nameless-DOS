@@ -42,10 +42,15 @@ public class NDOSCommand {
 
   public static void removeByPlugin(JavaPlugin p) {
     String pid = p.getID();
+    ArrayList<String> rl = new ArrayList<>();
     for(String ckey : RegExecutors.keySet()) {
       if(RegExecutors.get(ckey).equals(pid)) {
-        deleteCommand(ckey);
+        rl.add(ckey);
       }
+    }
+
+    for(String ckey : rl) {
+      deleteCommand(ckey);
     }
   }
 

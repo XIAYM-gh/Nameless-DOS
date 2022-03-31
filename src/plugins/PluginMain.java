@@ -69,39 +69,55 @@ public class PluginMain {
     //再逐个执行 onEnable 方法
     //并检查依赖
     int co = 0;
+    ArrayList<JavaPlugin> rl = new ArrayList<>();
+    ArrayList<JavaPlugin> pBlackList = new ArrayList<>();
 
     for (JavaPlugin plugin : Plugins) {
       co++;
       Logger.info("(" + co + "/" + Plugins.size() + ") " + plugin.getName() + " v" + plugin.getVersion());
 
       for (int i=0; i<plugin.getDepends().length(); i++) {
-        if(!Plugins.contains(plugin)) break;
+        if(!Plugins.contains(plugin) || pBlackList.contains(plugin)) break;
         String did = String.valueOf(plugin.getDepends().get(i));
         if(!did.equals("")) {
           if(getPlugin(did) == null) {
             Logger.warn("插件 " + plugin.getName() + " 需要的依赖插件不存在: " + did + " ，正在禁用.");
             try {
+              ArrayList<SimpleClassLoader> removingList = new ArrayList<>();
+
               for(SimpleClassLoader l:Loaders) {
                 if(l.getDeclaredPlugin().equals(plugin)) {
-                  Loaders.remove(l);
+                  //Loaders.remove(l);
+                  removingList.add(l);
                 }
               }
 
-              Plugins.remove(plugin);
+              for(SimpleClassLoader l:removingList) {
+                Loaders.remove(l);
+              }
+
+              rl.add(plugin);
+              pBlackList.add(plugin);
               NDOSCommand.removeByPlugin(plugin);
 
               plugin.onDisable();
-            } catch(Exception e) {}
+            } catch(Exception e) {
+              ErrorUtil.trace(e);
+            }
           }
         }
       }
 
       try{
-        if(Plugins.contains(plugin)) plugin.onEnable();
+        if(!pBlackList.contains(plugin)) plugin.onEnable();
       } catch(Exception e) {
         Logger.err("无法执行插件" + plugin.getName() + "的onEnable方法!");
         ErrorUtil.trace(e);
       }
+    }
+
+    for(JavaPlugin p:rl){
+      Plugins.remove(p);
     }
 
     inited = true;
