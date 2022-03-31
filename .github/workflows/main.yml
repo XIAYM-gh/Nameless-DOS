@@ -25,17 +25,40 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Decompress JSON
+      - name: 解压 JSON
         uses: TonyBogdanov/zip@1.0
         with:
             args: unzip -qq -o ./json.jar -d ./
 
-      - name: Decompress JLINE3
+      - name: 解压 JLINE3
         uses: TonyBogdanov/zip@1.0
         with:
             args: unzip -qq -o ./jline3.jar -d ./
 
-      - name: Decompress JANSI
+      - name: 解压 JANSI
         uses: TonyBogdanov/zip@1.0
         with:
             args: unzip -qq -o ./jansi.jar -d ./
+
+      - name: 安装 JDK 17
+        uses: actions/setup-java@v2
+        with:
+            distribution: 'temurin' # See 'Supported distributions' for available options
+            java-version: '17'
+
+      - name: 尝试编译项目
+        run: |
+            javac -d . -cp jansi.jar:jline3.jar:json.jar -encoding UTF-8 src/*.java src/console/*.java src/utils/*.java src/command/*.java src/plugins/*.java builtin-plugin/*.java
+            echo "Manifest-Version: 1.0" > mf.txt
+            echo "Main-Class: cn.xiaym.ndos.NDOSMain" >> mf.txt
+
+      - name: 打包项目
+        run: |
+            cp builtin-plugin/plugin_meta ndosplugin/
+            jar -cvmf mf.txt ndos.jar ./cn ./org ./ndosplugin
+
+      - name: 上传 ndos.jar
+        uses: actions/upload-artifact@v3
+        with:
+            name: debug-build
+            path: ndos.jar
