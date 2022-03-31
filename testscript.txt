@@ -1,0 +1,5 @@
+echo --format §a这是一个测试脚本!
+echo --format §0R§1a§2i§3n§4b§5o§6w
+echo --format §7w§8§9o§ab§bn§ci§da§eR
+echo --format §b§f粗§r§f体
+echo --format §o§f神§r§n§f奇§r§m§f效§r§k§f果

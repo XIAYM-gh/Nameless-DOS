@@ -5,6 +5,8 @@ import java.net.*;
 
 import cn.xiaym.utils.*;
 
+import org.json.*;
+
 abstract class PluginCore {
 
   public void onEnable(){}
@@ -20,6 +22,7 @@ public class JavaPlugin extends PluginCore {
   private String author;
   private String desc;
   private String id;
+  private JSONArray depends;
 
   public final void info(Object obj){
     Logger.info("[%s] %s".replaceFirst("%s",this.name).replaceFirst("%s",String.valueOf(obj)));
@@ -57,6 +60,10 @@ public class JavaPlugin extends PluginCore {
     this.id = id;
   }
 
+  public final void setDepends(JSONArray depends){
+    this.depends = depends;
+  }
+
   public final String getName(){
     return this.name;
   }
@@ -75,5 +82,9 @@ public class JavaPlugin extends PluginCore {
 
   public final String getID(){
     return this.id;
+  }
+
+  public final JSONArray getDepends(){
+    return this.depends;
   }
 }

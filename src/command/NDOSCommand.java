@@ -40,6 +40,15 @@ public class NDOSCommand {
     RegExecutors.remove(cmd);
   }
 
+  public static void removeByPlugin(JavaPlugin p) {
+    String pid = p.getID();
+    for(String ckey : RegExecutors.keySet()) {
+      if(RegExecutors.get(ckey).equals(pid)) {
+        deleteCommand(ckey);
+      }
+    }
+  }
+
   public static int commandsCount(){
     return RegisteredCommands.size();
   }
