@@ -23,7 +23,7 @@ ndosplugin文件夹内内容:<br>
  - plugin_meta
 
 #### 运行
-下载链接: [ndos.jar](https://asset.xiaym.ml/ndos.jar)<br>
+下载链接: [Github Actions](https://github.com/XIAYM-gh/Nameless-DOS/actions)<br>
 运行时请使用java 17，运行命令为:<br>
 > java -jar ndos.jar
 
