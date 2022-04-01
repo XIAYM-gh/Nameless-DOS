@@ -6,8 +6,14 @@ import cn.xiaym.ndos.plugins.*;
 
 import org.fusesource.jansi.AnsiConsole;
 
+import java.util.*;
+
 public class NDOSMain {
   public static void main(String[] args){
+
+    List<String> arguments = Arrays.asList(args);
+    if(arguments.contains("-debug")) NDOSAPI.DEBUG_MODE = true;
+
     xconfig x = new xconfig("config.properties");
 
     if(x.get("configuration-formatting", "true").equals("true")) ConfigFormatter.doFormat();

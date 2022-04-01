@@ -17,13 +17,21 @@ public class Logger {
     for(String str_:str_split){
       String time = new SimpleDateFormat("HH:mm:ss").format(new Date(System.currentTimeMillis()));
 
-      /*if(!NDOSAPI.JANSI_ENABLED) {
-        String REGEX_STR = "\\x1b(\\[.*?[@-~]|\\].*?(\\x07|\\x1b\\\\))";
-        AnsiConsole.out().println("\r["+time+" "+type+"] "+str.replaceAll(REGEX_STR, ""));
-        return;
-      }*/
+      StringBuilder b = new StringBuilder("\r");
+      //时间
+      b.append(time);
 
-      AnsiConsole.out().println("\r"+time+" ["+ansi().fgBright(ConvertColor(typecolor)).bold().a(type).reset()+"] "+ansi().fgBright(ConvertColor(textcolor)).a(str_).reset());
+      b.append(" ");
+
+      //等级
+      b.append("[").append(ansi().fgBright(ConvertColor(typecolor)).bold().a(type).reset()).append("]");
+
+      b.append(" ");
+
+      //输出内容
+      b.append(ansi().fgBright(ConvertColor(textcolor)).a(str_).reset());
+
+      AnsiConsole.out().println(b.toString());
     }
 
     Logger.flush();
@@ -43,6 +51,10 @@ public class Logger {
 
   public static void success(Object obj){
     Logger.out(String.valueOf(obj), "I", "default", "green");
+  }
+
+  public static void debug(Object obj){
+    if(NDOSAPI.DEBUG_MODE) Logger.out(String.valueOf(obj), "D", "blue", "default");
   }
 
   public static void flush(){
@@ -78,23 +90,4 @@ public class Logger {
     }
   }
 
-  public static void Test(){
-    Logger.Test("default");
-    Logger.Test("red");
-    Logger.Test("blue");
-    Logger.Test("purple");
-    Logger.Test("black");
-    Logger.Test("white");
-    Logger.Test("yellow");
-    Logger.Test("cyan");
-    Logger.Test("green");
-  }
-
-  public static void Test(String color){
-    Logger.out(color + " test", "TESTING", "blue", color);
-  }
-
-  public static void outByRender(String r){
-    System.out.println(ansi().render(r));
-  }
 }

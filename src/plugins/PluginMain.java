@@ -66,6 +66,8 @@ public class PluginMain {
       }
     }
 
+    Logger.debug("插件初始化完成!");
+
     //再逐个执行 onEnable 方法
     //并检查依赖
     int co = 0;
