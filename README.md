@@ -10,7 +10,7 @@
 <br>
 编译时，请一并编译 builtin-plugins 文件夹内的main.java<br>
 编译脚本(Linux)参考此处: <br>
-[Github Actions -> main.yml](https://github.com/XIAYM-gh/Nameless-DOS/blob/main/.github/workflows/main.yml)
+[Github Actions main.yml](https://github.com/XIAYM-gh/Nameless-DOS/blob/main/.github/workflows/main.yml)
 
 #### 运行
 下载链接: [Github Actions](https://github.com/XIAYM-gh/Nameless-DOS/actions)<br>
