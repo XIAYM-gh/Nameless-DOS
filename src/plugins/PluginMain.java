@@ -14,6 +14,7 @@ import org.json.*;
 public class PluginMain {
   private static ArrayList<JavaPlugin> Plugins = new ArrayList<>();
   private static ArrayList<SimpleClassLoader> Loaders = new ArrayList<>();
+  private static HashMap<String, Class<?>> cachedClasses = new HashMap<>();
   private static ClassLoader cl = new NullClass().getClass().getClassLoader();
   private static boolean inited = false;
 
@@ -172,14 +173,22 @@ public class PluginMain {
     Loaders.add(lo);
   }
 
+  public static void clearCache(){
+    cachedClasses.clear();
+  }
+
   public static Class<?> getClass(String name){
+    if(cachedClasses.containsKey(name) && cachedClasses.get(name) != null) return cachedClasses.get(name);
+
     for(SimpleClassLoader l:Loaders){
       try{
-        Class<?> result = l.findClass(name ,false);
+        Class<?> result = l.findClass(name, false);
+        cachedClasses.put(name, result);
         return result;
       } catch(Exception e) {}
     }
 
+    cachedClasses.put(name, null);
     return null;
   }
 

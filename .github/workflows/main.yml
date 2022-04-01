@@ -57,8 +57,32 @@ jobs:
             cp builtin-plugin/plugin_meta ndosplugin/
             jar -cvmf mf.txt ndos.jar ./cn ./org ./ndosplugin
 
-      - name: 上传 ndos.jar
-        uses: actions/upload-artifact@v3
+      - name: 创建 Release
+        id: create_release
+        uses: actions/create-release@v1.1.4
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-            name: debug-build
-            path: ndos.jar
+            owner: "XIAYM-gh"
+            repo: "Nameless-DOS"
+            tag_name: ${{ github.run_id }}
+            release_name: Debug 自动构建 ${{ github.run_id }}
+            draft: false
+            prerelease: true
+            body: |
+                Nameless DOS 自动构建 #${{ github.run_id }}
+
+                请直接下载此处的 ndos.jar
+
+                注意事项:
+                - 请使用JDK/JRE 17进行编译/运行
+
+      - name: 上传 NDOS 文件
+        uses: actions/upload-release-asset@v1
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: ./ndos.jar
+            asset_name: ndos.jar
+            asset_content_type: application/octet-stream
