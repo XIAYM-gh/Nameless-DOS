@@ -9,18 +9,8 @@
  - /jansi.jar
 <br>
 编译时，请一并编译 builtin-plugins 文件夹内的main.java<br>
-JAR 目录结构:<br>
-
- - META-INF
- - cn
- - org
- - ndosplugin
-
-<br>
-ndosplugin文件夹内内容:<br>
-
- - main.class (编译后)
- - plugin_meta
+编译脚本(Linux)参考此处: <br>
+[Github Actions -> main.yml](https://github.com/XIAYM-gh/Nameless-DOS/blob/main/.github/workflows/main.yml)
 
 #### 运行
 下载链接: [Github Actions](https://github.com/XIAYM-gh/Nameless-DOS/actions)<br>
