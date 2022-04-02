@@ -99,13 +99,14 @@ jobs:
         run: |
             echo "LATEST-RELEASE=${{ steps.last_release.outputs.tag_name }}" > version
             echo "LATEST-DEBUG=${{ github.run_id }}" >> version
+            ls -a
 
       - name: 推送版本信息到 data 分支 (1/2)
         run: |
             git config --global user.email "xiaym123@qq.com"
             git config --global user.name "XIAYM-gh"
-            git switch data
-            git commit -m "推送版本信息" -a
+            git add version
+            git commit -m "推送版本信息"
 
       - name: 推送版本信息到 data 分支 (2/2)
         uses: ad-m/github-push-action@master
