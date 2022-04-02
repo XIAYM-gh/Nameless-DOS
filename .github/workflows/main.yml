@@ -87,13 +87,15 @@ jobs:
             asset_name: ndos.jar
             asset_content_type: application/octet-stream
 
-      - name: 获取以及保存 Releases 信息
-        id: latest_release
+      - name: 获取 Releases 信息
+        id: last_release
         uses: InsonusK/get-latest-release@v1.0.1
         with: 
             myToken: ${{ secrets.GITHUB_TOKEN }}
             exclude_types: "release"
             view-top: 256
+
+      - name: 保存 Releases 信息
         run: |
             echo "LATEST-RELEASE=${{ steps.last_release.outputs.tag_name }}" > version
             echo "LATEST-DEBUG=${{ github.run_id }}" >> version
