@@ -101,8 +101,9 @@ jobs:
             echo "LATEST-DEBUG=${{ github.run_id }}" >> version
             ls -a
 
-      - name: 推送版本信息到 data 分支 (1/2)
+      - name: 推送版本信息到 data 分支
         run: |
+            echo "${{ secrets.GITHUB_TOKEN }}"
             git config --global user.email "xiaym123@qq.com"
             git config --global user.name "XIAYM-gh"
             git clone -b data https://github.com/XIAYM-gh/Nameless-DOS repo
@@ -111,11 +112,4 @@ jobs:
             git pull -q -ff
             git add version
             git commit -m "推送版本信息"
-
-      - name: 推送版本信息到 data 分支 (2/2)
-        uses: ad-m/github-push-action@master
-        with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            repository: XIAYM-gh/Nameless-DOS
-            branch: data
-            force: true
+            git push -f
