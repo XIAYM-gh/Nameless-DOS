@@ -93,7 +93,7 @@ jobs:
         with: 
             myToken: ${{ secrets.GITHUB_TOKEN }}
             exclude_types: "release"
-            view-top: 256
+            view_top: 256
 
       - name: 保存 Releases 信息
         run: |
@@ -112,5 +112,5 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            repository: Nameless-DOS
+            repository: XIAYM-gh/Nameless-DOS
             branch: data
