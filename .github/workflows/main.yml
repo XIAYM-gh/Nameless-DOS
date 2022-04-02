@@ -100,10 +100,14 @@ jobs:
             echo "LATEST-RELEASE=${{ steps.last_release.outputs.tag_name }}" > version
             echo "LATEST-DEBUG=${{ github.run_id }}" >> version
 
-      - name: 推送版本信息到 data 分支
+      - name: 推送版本信息到 data 分支 (1/2)
         run: |
             git config --global user.email "xiaym123@qq.com"
             git config --global user.name "XIAYM-gh"
             git commit -m "推送版本信息" -a
-            git push --set-upstream origin data
-      
+
+      - name: 推送版本信息到 data 分支 (2/2)
+        uses: ad-m/github-push-action@master
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            branch: data
