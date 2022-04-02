@@ -118,3 +118,4 @@ jobs:
             github_token: ${{ secrets.GITHUB_TOKEN }}
             repository: XIAYM-gh/Nameless-DOS
             branch: data
+            force: true
