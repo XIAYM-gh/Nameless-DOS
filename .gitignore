@@ -3,3 +3,5 @@
 /ndos.jar
 /plugins/
 *.swp
+/.gitignore
+/version.properties

@@ -15,6 +15,7 @@ public class PluginMain {
   private static ArrayList<JavaPlugin> Plugins = new ArrayList<>();
   private static ArrayList<SimpleClassLoader> Loaders = new ArrayList<>();
   private static HashMap<String, Class<?>> cachedClasses = new HashMap<>();
+  private static HashMap<String, Integer> undefinedClassFindCount = new HashMap<>();
   private static ClassLoader cl = new NullClass().getClass().getClassLoader();
   private static boolean inited = false;
 
@@ -175,10 +176,17 @@ public class PluginMain {
 
   public static void clearCache(){
     cachedClasses.clear();
+    undefinedClassFindCount.clear();
   }
 
+  /* 解释:
+   * 当调用时，自动缓存这个class
+   * 如果class不存在，则增加一次寻找次数
+   * 为提高寻找效率，如果寻找次数到达30, 那将会直接返回null
+   */
   public static Class<?> getClass(String name){
     if(cachedClasses.containsKey(name) && cachedClasses.get(name) != null) return cachedClasses.get(name);
+    if(undefinedClassFindCount.containsKey(name) && undefinedClassFindCount.getOrDefault(name, 0) >= 30) return null;
 
     for(SimpleClassLoader l:Loaders){
       try{
@@ -189,6 +197,7 @@ public class PluginMain {
     }
 
     cachedClasses.put(name, null);
+    undefinedClassFindCount.put(name, undefinedClassFindCount.getOrDefault(name, 0) + 1);
     return null;
   }
 

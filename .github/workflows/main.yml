@@ -51,7 +51,7 @@ jobs:
             javac -d . -cp jansi.jar:jline3.jar:json.jar -encoding UTF-8 src/*.java src/console/*.java src/utils/*.java src/command/*.java src/plugins/*.java builtin-plugin/*.java
             echo "Manifest-Version: 1.0" > mf.txt
             echo "Main-Class: cn.xiaym.ndos.NDOSMain" >> mf.txt
-
+            echo "version=${{ github.run_id }}" > version.properties
       - name: 打包项目
         run: |
             cp builtin-plugin/plugin_meta ndosplugin/

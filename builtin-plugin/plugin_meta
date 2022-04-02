@@ -6,7 +6,7 @@ plugin.id=builtinPlugin
 plugin.main-class=ndosplugin.main
 plugin.depends=[""]
 # commands中填写命令id, cmd.命令id.reg-name中填入要注册的命令
-plugin.commands=["exit", "version", "plugins", "help", "set", "echo", "status", "clear", "script"]
+plugin.commands=["exit", "version", "plugins", "help", "set", "echo", "status", "clear", "script", "chkupd"]
 
 cmd.exit.reg-name=EXIT
 cmd.exit.desc=退出 NDOS
@@ -39,3 +39,6 @@ cmd.clear.desc=清除屏幕上的内容
 cmd.script.reg-name=SCRIPT
 cmd.script.desc=运行外部脚本
 cmd.script.usage=script <脚本文件路径>
+
+cmd.chkupd.reg-name=CHECKUPDATE
+cmd.chkupd.desc=检查 NDOS 更新
