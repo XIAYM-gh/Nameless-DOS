@@ -46,10 +46,16 @@ public class UpdateUtil {
     Logger.info("正在检查更新...");
 
     try {
-      HttpResponse<String> response = client.send(getSimpleRequest("https://api.github.com/repos/XIAYM-gh/Nameless-DOS/releases?per_page=1"), HttpResponse.BodyHandlers.ofString());
-      if(response.statusCode() != 200) throw new IOException();
+      HttpResponse<String> response = client.send(
+          getSimpleRequest("https://api.github.com/repos/XIAYM-gh/Nameless-DOS/releases?per_page=1"),
+          HttpResponse.BodyHandlers.ofString()
+          );
+
+      if(response.statusCode() != 200) throw new IOException("状态码错误");
+
       JSONObject jo = (JSONObject) new JSONArray(response.body()).get(0);
       long remote_version = Long.parseLong(jo.getString("tag_name"));
+
       if(remote_version > local_version) {
         Logger.info("检查到更新! 请通过以下地址下载:");
         Logger.info("https://github.com/XIAYM-gh/Nameless-DOS/releases/download/" + remote_version + "/ndos.jar");
@@ -58,10 +64,12 @@ public class UpdateUtil {
         Logger.info("没有更新版本.");
         return;
       }
+
     } catch(JSONException e) {
       Logger.err("检查更新失败: JSON解析错误，请检查您的网络。");
     } catch(IOException e) {
       Logger.err("检查更新失败: 无法连接到 Github API 服务器.");
+      Logger.err("错误详情: " + e.getMessage());
     } catch(Exception e) {
       Logger.err("检查更新失败: 未知错误: " + e.toString());
       Logger.err("错误详情: " + e.getMessage());
