@@ -105,6 +105,9 @@ jobs:
         run: |
             git config --global user.email "xiaym123@qq.com"
             git config --global user.name "XIAYM-gh"
+            git clone -b data git@github.com:XIAYM-gh/Nameless-DOS.git repo
+            cd repo
+            mv ../version .
             git add version
             git commit -m "推送版本信息"
 
