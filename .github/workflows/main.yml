@@ -108,6 +108,7 @@ jobs:
             git clone -b data https://github.com/XIAYM-gh/Nameless-DOS repo
             cd repo
             mv ../version .
+            git pull -q -ff
             git add version
             git commit -m "推送版本信息"
 
