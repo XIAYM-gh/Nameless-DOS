@@ -86,30 +86,3 @@ jobs:
             asset_path: ./ndos.jar
             asset_name: ndos.jar
             asset_content_type: application/octet-stream
-
-      - name: 获取 Releases 信息
-        id: last_release
-        uses: InsonusK/get-latest-release@v1.0.1
-        with: 
-            myToken: ${{ secrets.GITHUB_TOKEN }}
-            exclude_types: "release"
-            view_top: 256
-
-      - name: 保存 Releases 信息
-        run: |
-            echo "LATEST-RELEASE=${{ steps.last_release.outputs.tag_name }}" > version
-            echo "LATEST-DEBUG=${{ github.run_id }}" >> version
-            ls -a
-
-      - name: 推送版本信息到 data 分支
-        run: |
-            echo "${{ secrets.GITHUB_TOKEN }}"
-            git config --global user.email "xiaym123@qq.com"
-            git config --global user.name "XIAYM-gh"
-            git clone -b data https://github.com/XIAYM-gh/Nameless-DOS repo
-            cd repo
-            mv ../version .
-            git pull -q -ff
-            git add version
-            git commit -m "推送版本信息"
-            git push -f
