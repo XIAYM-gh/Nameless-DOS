@@ -192,6 +192,7 @@ public class PluginMain {
       try{
         Class<?> result = l.findClass(name, false);
         cachedClasses.put(name, result);
+        undefinedClassFindCount.remove(name);
         return result;
       } catch(Exception e) {}
     }
