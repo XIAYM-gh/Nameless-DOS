@@ -55,7 +55,7 @@ jobs:
       - name: 打包项目
         run: |
             cp builtin-plugin/plugin_meta ndosplugin/
-            jar -cvmf mf.txt ndos.jar ./cn ./org ./ndosplugin
+            jar -cvmf mf.txt ndos.jar ./cn ./org ./ndosplugin ./version.properties
 
       - name: 创建 Release
         id: create_release
