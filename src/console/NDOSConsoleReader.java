@@ -18,7 +18,6 @@ public class NDOSConsoleReader implements Runnable {
     try{
       Terminal terminal = TerminalBuilder.builder()
                           .system(true)
-                          .encoding("UTF-8")
                           .jansi(true)
                           .jna(false)
                           .build();
