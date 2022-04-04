@@ -3,7 +3,8 @@ package cn.xiaym.utils;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.text.*;
+import java.time.*;
+import java.time.format.*;
 
 import cn.xiaym.ndos.*;
 
@@ -15,7 +16,7 @@ public class Logger {
   public static void out(String str, String type, String typecolor, String textcolor){
     String[] str_split = str.split("\n");
     for(String str_:str_split){
-      String time = new SimpleDateFormat("HH:mm:ss").format(new Date(System.currentTimeMillis()));
+      String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
       StringBuilder b = new StringBuilder("\r");
       //时间
