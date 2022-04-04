@@ -7,6 +7,8 @@ import cn.xiaym.ndos.*;
 import org.jline.terminal.*;
 import org.jline.reader.*;
 
+import java.nio.charset.*;
+
 public class NDOSConsoleReader implements Runnable {
   //Init
   public NDOSConsoleReader() {}
@@ -23,7 +25,7 @@ public class NDOSConsoleReader implements Runnable {
       LineReader lineReader = LineReaderBuilder.builder().terminal(terminal).build();
 
       while(true) {
-        String line = new String(lineReader.readLine("").getBytes("UTF-8"));
+        String line = new String(lineReader.readLine("").getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
 
         if(line.length() > 0) {
           //实现命令托管
