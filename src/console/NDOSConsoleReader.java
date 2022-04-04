@@ -18,13 +18,15 @@ public class NDOSConsoleReader implements Runnable {
     try{
       Terminal terminal = TerminalBuilder.builder()
                           .system(true)
+                          .encoding(Charset.defaultCharset())
                           .jansi(true)
                           .jna(false)
                           .build();
+      
       LineReader lineReader = LineReaderBuilder.builder().terminal(terminal).build();
 
       while(true) {
-        String line = lineReader.readLine();
+        String line = new String(lineReader.readLine().getBytes(Charset.defaultCharset()));
 
         if(line.length() > 0) {
           //实现命令托管
