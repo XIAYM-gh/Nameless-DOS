@@ -20,6 +20,7 @@ public class UpdateUtil {
 
   public static void checkUpdate(boolean down) {
     String mainPath = new NullClass().getClass().getProtectionDomain().getCodeSource().getLocation().getPath().split("!")[0];
+    if(mainPath.charAt(2) == ':') mainPath = mainPath.substring(1);
     if (down) Logger.debug("NDOS 主包路径: " + mainPath);
     try {
       ClassLoader mainPackCL = new NullClass().getClass().getClassLoader();

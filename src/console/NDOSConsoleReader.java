@@ -23,7 +23,7 @@ public class NDOSConsoleReader implements Runnable {
       LineReader lineReader = LineReaderBuilder.builder().terminal(terminal).build();
 
       while(true) {
-        String line = lineReader.readLine("");
+        String line = new String(lineReader.readLine("").getBytes("UTF-8"));
 
         if(line.length() > 0) {
           //实现命令托管
