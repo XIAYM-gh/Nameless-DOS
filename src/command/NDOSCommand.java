@@ -83,22 +83,57 @@ public class NDOSCommand {
   public static void showHelp(String cmd) {
     cmd = cmd.toLowerCase();
 
-    if(cmd.equals("help")) {
-      Info("§6====== 命令帮助 ======");
-      for(String cm : new TreeMap<>(RegisteredCommands).keySet()) {
-        Info("§9" + cm + " §r- §f" + RegisteredCommands.get(cm));
+    Boolean havepage = false;
+    int page = 1;
+    if(cmd.length() > 5 && is_int(cmd.substring(5))) {
+      havepage = true;
+      page = Integer.parseInt(cmd.substring(5));
+    }
+
+    int pageCount = 0;
+    int len = RegisteredCommands.size();
+    int tmp = 0;
+
+    while(len>0){
+      if(tmp == 10) {
+        pageCount++;
+        tmp = 0;
+      }
+      tmp++;
+      len--;
+    }
+
+    pageCount++;
+
+    if(cmd.trim().equals("help") || havepage) {
+      Info("§6====== 命令帮助 (第 " + page + "/" + pageCount + " 页) ======");
+      if(page < 0 || page > pageCount) return;
+
+      Map<String, String> sorted = new TreeMap<>(RegisteredCommands);
+
+      for(int cou=(page-1)*10; (cou < page*10 && cou < sorted.size()); cou++) {
+        String seckey = (String) sorted.keySet().toArray()[cou];
+        Info("§9" + seckey + "§r - §f" + RegisteredCommands.get(seckey));
       }
     } else {
       String cmdName = cmd.substring(5).toLowerCase();
       if(RegisteredCommands.containsKey(cmdName)){
-        Info("§6====== "+cmdName+" 的帮助 ======");
+        Info("§6====== 命令 "+cmdName+" 的帮助 ======");
         Info("§f" + RegisteredCommands.get(cmdName) + "\n");
         if(CommandTips.containsKey(cmdName)) Info("§f提示:\n§d" + CommandTips.get(cmdName));
         if(CommandUsage.containsKey(cmdName)) Info("§f用法:\n§d" + CommandUsage.get(cmdName));
       } else {
         Logger.warn("已注册的命令列表中不存在此项.");
-        showHelp("help");
       }
+    }
+  }
+
+  public static boolean is_int(String origin) {
+    try {
+      Integer.parseInt(origin);
+      return true;
+    } catch(Exception e) {
+      return false;
     }
   }
 
