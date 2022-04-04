@@ -1,5 +1,6 @@
 ## Nameless DOS (Java)
-这个项目是从 [NDOS](https://cmd.xinv.ink/) 还原来的.
+这个项目参考了: [NDOS](https://cmd.xinv.ink/).<br>
+这是一个扩展性高的控制台应用，允许你自由添加插件，执行命令
 
 #### 编译
 请使用 jdk 17+<br>
@@ -22,3 +23,6 @@
  - 支持使用插件扩展功能
  - 支持[使用MC格式化字符](https://github.com/XIAYM-gh/Nameless-DOS/blob/main/src/utils/McColorFormatter.java)(§)
  - 自动格式化配置文件
+ - 支持运行外部脚本
+ - 一键更新
+
