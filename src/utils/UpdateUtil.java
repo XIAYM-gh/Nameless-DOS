@@ -4,6 +4,8 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 import java.net.http.*;
+import java.nio.*;
+import java.nio.file.*;
 
 import cn.xiaym.ndos.*;
 
@@ -13,6 +15,12 @@ public class UpdateUtil {
   private static long local_version = -1L;
 
   public static void checkUpdate() {
+    checkUpdate(false);
+  }
+
+  public static void checkUpdate(boolean down) {
+    String mainPath = new NullClass().getClass().getProtectionDomain().getCodeSource().getLocation().getPath().split("!")[0];
+    if (down) Logger.debug("NDOS 主包路径: " + mainPath);
     try {
       ClassLoader mainPackCL = new NullClass().getClass().getClassLoader();
       InputStream in = mainPackCL.getResourceAsStream("version.properties");
@@ -57,8 +65,20 @@ public class UpdateUtil {
       long remote_version = Long.parseLong(jo.getString("tag_name"));
 
       if(remote_version > local_version) {
-        Logger.info("检查到更新! 请通过以下地址下载:");
-        Logger.info("https://github.com/XIAYM-gh/Nameless-DOS/releases/download/" + remote_version + "/ndos.jar");
+        if(down) {
+          Logger.info("检查到更新! 正在下载...");
+          Logger.info("此过程可能较慢，请耐心等待.");
+          if(download("https://github.com/XIAYM-gh/Nameless-DOS/releases/download/" + remote_version + "/ndos.jar")){
+            Logger.success("下载成功，正在覆盖NDOS主文件..");
+            new File("download_cache").renameTo(new File(mainPath));
+            Logger.info("请重启 NDOS 以应用更新.");
+          } else {
+            Logger.err("下载失败，请稍后重试.");
+          }
+        } else {
+          Logger.info("检查到更新! 请使用 checkupdate download 命令下载或通过以下地址下载:");
+          Logger.info("https://github.com/XIAYM-gh/Nameless-DOS/releases/download/" + remote_version + "/ndos.jar");
+        }
         return;
       } else {
         Logger.info("没有更新版本.");
@@ -82,5 +102,16 @@ public class UpdateUtil {
       .build();
 
     return req;
+  }
+
+  private static boolean download(String url) {
+    try {
+      InputStream in = new URL(url).openStream();
+      Files.copy(in, Paths.get("download_cache"), StandardCopyOption.REPLACE_EXISTING);
+      return true;
+    } catch(Exception e) {
+      Logger.err("下载失败: " + e.getMessage());
+    }
+    return false;
   }
 }

@@ -63,6 +63,10 @@ public class main extends JavaPlugin {
       }
       File2Command.run(cmd.substring(7));
     } else if(cmd_.startsWith("checkupdate")) {
+      if(cmd_.startsWith("checkupdate download")) {
+        UpdateUtil.checkUpdate(true);
+        return;
+      }
       UpdateUtil.checkUpdate();
     }
   }
