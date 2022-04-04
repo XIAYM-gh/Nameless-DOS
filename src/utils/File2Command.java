@@ -28,6 +28,7 @@ public class File2Command {
           return;
         } else {
           NDOSCommand.NDOSCommandParser.parse(line);
+          Thread.sleep(5);
         }
       }
 
@@ -40,12 +41,11 @@ public class File2Command {
       Logger.err("请检查此脚本是否有不停调用自己的行为");
       Logger.info("正在尝试释放内存..");
       System.gc();
+    } catch(Exception e) {
+      ErrorUtil.trace(e);
     }
 
     file = null;
     System.gc();
-    try{
-      Thread.sleep(5);
-    } catch(InterruptedException e) {}
-  }
+    }
 }
