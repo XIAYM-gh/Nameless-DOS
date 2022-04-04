@@ -77,7 +77,24 @@ public class UpdateUtil {
             Logger.err("下载失败，请稍后重试.");
           }
         } else {
+          String updateTitle = "";
+          Boolean commitRequestSucceed = false;
+          try{
+            response = client.send(
+                getSimpleRequest("https://api.github.com/repos/XIAYM-gh/Nameless-DOS/commits/" + jo.getString("target_commitish")),
+                HttpResponse.BodyHandlers.ofString()
+                );
+
+            if(response.statusCode() != 200) throw new Exception("状态码错误");
+
+            updateTitle = new JSONObject(response.body()).getJSONObject("commit").getString("message");
+            commitRequestSucceed = true;
+          } catch(Exception e) {
+            Logger.err("获取详细信息时发生错误.");
+            ErrorUtil.trace(e);
+          }
           Logger.info("检查到更新! 请使用 checkupdate download 命令下载或通过以下地址下载:");
+          if(commitRequestSucceed) Logger.info("更新信息: " + updateTitle);
           Logger.info("https://github.com/XIAYM-gh/Nameless-DOS/releases/download/" + remote_version + "/ndos.jar");
         }
         return;
