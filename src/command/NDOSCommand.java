@@ -90,20 +90,7 @@ public class NDOSCommand {
       page = Integer.parseInt(cmd.substring(5));
     }
 
-    int pageCount = 0;
-    int len = RegisteredCommands.size();
-    int tmp = 0;
-
-    while(len>0){
-      if(tmp == 10) {
-        pageCount++;
-        tmp = 0;
-      }
-      tmp++;
-      len--;
-    }
-
-    pageCount++;
+    int pageCount = (int) Math.floor(RegisteredCommands.size() /  10) + 1;
 
     if(cmd.trim().equals("help") || havepage) {
       Info("§6====== 命令帮助 (第 " + page + "/" + pageCount + " 页) ======");
