@@ -20,11 +20,17 @@ public class NDOSConsoleReader implements Runnable {
   //Init
   public NDOSConsoleReader() {
     try{
-      terminal = TerminalBuilder.builder()
+      TerminalBuilder terminalBuilder = TerminalBuilder.builder()
           .encoding(Charset.defaultCharset())
           .jansi(true)
-          .jna(false)
-          .build();
+          .jna(false);
+
+      if(new xconfig("config.priperties").get("use-dumb-terminal-on-windows", "true").equals("true") && System.getProperty("os.name").toLowerCase().contains("windows")) {
+        Logger.info("当前正在使用Dumb Terminal, 部分快捷功能可能会被禁用.");
+        terminalBuilder.dumb(true);
+      }
+
+      terminal = terminalBuilder.build();
 
       hist = new DefaultHistory();
     } catch(java.io.IOException e) {

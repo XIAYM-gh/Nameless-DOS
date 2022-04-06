@@ -15,10 +15,16 @@ public class ConfigFormatter {
 
     xNew.newLine("");
 
+    xNew.newCommentLine("在 Windows 上使用 Dumb Terminal (默认: true)");
+    xNew.put("use-dumb-terminal-on-windows", x.get("use-dumb-terminal-on-windows", "true").equals("true") ? "true" : "false");
+
+    xNew.newLine("");
+
     xNew.newCommentLine("其它配置");
 
     Set<String> set = xNew.keySet();
     set.remove("configuration-formatting");
+    set.remove("use-dumb-terminal-on-windows");
 
     for(String key:set) {
       xNew.put(key, x.get(key, ""));
