@@ -13,23 +13,30 @@ import java.nio.charset.*;
 
 public class NDOSConsoleReader implements Runnable {
 
-  DefaultHistory hist = new DefaultHistory();
-  Boolean running;
-
+  static DefaultHistory hist;
+  static Boolean running;
+  static Terminal terminal;
+ 
   //Init
-  public NDOSConsoleReader() {}
+  public NDOSConsoleReader() {
+    try{
+      terminal = TerminalBuilder.builder()
+          .encoding(Charset.defaultCharset())
+          .jansi(true)
+          .jna(false)
+          .build();
+
+      hist = new DefaultHistory();
+    } catch(java.io.IOException e) {
+      Logger.err("Terminal 初始化失败!");
+      System.exit(-1);
+    }
+  }
 
   @Override
   public void run() {
     try{
       running = true;
-
-      Terminal terminal = TerminalBuilder.builder()
-                          .system(true)
-                          .encoding(Charset.defaultCharset())
-                          .jansi(true)
-                          .jna(false)
-                          .build();
       
       while(running) { 
         LineReader lineReader = LineReaderBuilder.builder()
