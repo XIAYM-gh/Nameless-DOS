@@ -6,16 +6,24 @@ import cn.xiaym.ndos.*;
 
 import org.jline.terminal.*;
 import org.jline.reader.*;
+import org.jline.reader.impl.history.*;
+import org.jline.reader.impl.completer.*;
 
 import java.nio.charset.*;
 
 public class NDOSConsoleReader implements Runnable {
+
+  DefaultHistory hist = new DefaultHistory();
+  Boolean running;
+
   //Init
   public NDOSConsoleReader() {}
 
   @Override
   public void run() {
     try{
+      running = true;
+
       Terminal terminal = TerminalBuilder.builder()
                           .system(true)
                           .encoding(Charset.defaultCharset())
@@ -23,9 +31,13 @@ public class NDOSConsoleReader implements Runnable {
                           .jna(false)
                           .build();
       
-      LineReader lineReader = LineReaderBuilder.builder().terminal(terminal).build();
+      while(running) { 
+        LineReader lineReader = LineReaderBuilder.builder()
+          .terminal(terminal)
+          .history(hist)
+          .completer(new StringsCompleter(NDOSCommand.getCompleterArray()))
+          .build();
 
-      while(true) {
         String line = new String(lineReader.readLine().getBytes(Charset.defaultCharset()));
 
         if(line.length() > 0) {
@@ -37,11 +49,11 @@ public class NDOSConsoleReader implements Runnable {
       }
 
     } catch(UserInterruptException|EndOfFileException e) {
-      System.out.println();
-      System.out.flush();
-      NDOSMain.exit();
+      NDOSMain.escape();
+      running = false;
     } catch(Exception e) {
       ErrorUtil.trace(e);
+      running = false;
       System.exit(-1);
     }
   }

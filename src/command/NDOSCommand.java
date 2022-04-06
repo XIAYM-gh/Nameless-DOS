@@ -128,6 +128,10 @@ public class NDOSCommand {
     Logger.info(McColorFormatter.toANSI(msg));
   }
 
+  public static Set<String> getCompleterArray() {
+    return new TreeMap<>(RegisteredCommands).keySet();
+  }
+
   //sub-class Parser
   public class NDOSCommandParser {
     public static void parse(String cmd) {
