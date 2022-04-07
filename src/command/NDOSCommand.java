@@ -2,6 +2,7 @@ package cn.xiaym.ndos.command;
 
 import cn.xiaym.utils.*;
 import cn.xiaym.ndos.plugins.*;
+import cn.xiaym.ndos.console.*;
 
 import java.util.*;
 
@@ -135,6 +136,10 @@ public class NDOSCommand {
   //sub-class Parser
   public class NDOSCommandParser {
     public static void parse(String cmd) {
+      for (String vkey : EnvVariables.getVarList()) {
+        cmd = cmd.replaceAll("%" + vkey + "%", EnvVariables.get(vkey));
+      }
+
       if(isVaild(cmd.toLowerCase())){
         JavaPlugin executor = PluginMain.getPlugin(RegExecutors.get(cmd.split(" ")[0].toLowerCase()));
         if(executor != null){
