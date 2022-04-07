@@ -13,15 +13,42 @@ import org.json.*;
 
 public class UpdateUtil { 
   private static long local_version = -1L;
+  private static xconfig x;
+
+  private static void init() {
+    x = ConfigUtil.getSection("updateutil");
+
+    if(!ConfigUtil.hasSection("updateutil")) {
+      x.newCommentLine("NDOS Update Util - Configuration File");
+      x.newLine("");
+
+      x.newCommentLine("是否使用镜像源检查更新 (默认: false)");
+      x.newCommentLine("镜像源由 Vercel 提供 (链接: https://proxy-a.vercel.app/api/ )");
+      x.put("use-api-mirror", "false");
+
+      x.newLine("");
+
+      x.newCommentLine("是否使用 GHProxy 进行更新文件下载 (默认: false)");
+      x.newCommentLine("在国内建议启用，但有时可能无法连接，需要多试几次 (链接: https://ghproxy.com/ )");
+      x.put("use-ghproxy", "false");
+
+      x.save();
+    }
+  }
 
   public static void checkUpdate() {
     checkUpdate(false);
   }
 
   public static void checkUpdate(boolean down) {
+    init();
+    String apiAddr = x.get("use-api-mirror", "false").equals("true") ? "https://proxy-a.vercel.app/api" : "https://api.github.com" ;
+    String ghproxyAddr = x.get("use-ghproxy", "false").equals("true") ? "https://ghproxy.com/" : "" ;
+
     String mainPath = new NullClass().getClass().getProtectionDomain().getCodeSource().getLocation().getPath().split("!")[0];
     if(mainPath.charAt(2) == ':') mainPath = mainPath.substring(1);
     if (down) Logger.debug("NDOS 主包路径: " + mainPath);
+
     try {
       ClassLoader mainPackCL = new NullClass().getClass().getClassLoader();
       InputStream in = mainPackCL.getResourceAsStream("version.properties");
@@ -56,7 +83,7 @@ public class UpdateUtil {
 
     try {
       HttpResponse<String> response = client.send(
-          getSimpleRequest("https://api.github.com/repos/XIAYM-gh/Nameless-DOS/releases?per_page=1"),
+          getSimpleRequest(apiAddr + "/repos/XIAYM-gh/Nameless-DOS/releases?per_page=1"),
           HttpResponse.BodyHandlers.ofString()
           );
 
@@ -69,7 +96,7 @@ public class UpdateUtil {
         if(down) {
           Logger.info("检查到更新! 正在下载...");
           Logger.info("此过程可能较慢，请耐心等待.");
-          if(download("https://github.com/XIAYM-gh/Nameless-DOS/releases/download/" + remote_version + "/ndos.jar")){
+          if(download(ghproxyAddr + "https://github.com/XIAYM-gh/Nameless-DOS/releases/download/" + remote_version + "/ndos.jar")){
             Logger.success("下载成功，正在覆盖NDOS主文件..");
             new File("download_cache").renameTo(new File(mainPath));
             Logger.info("请重启 NDOS 以应用更新.");
@@ -81,7 +108,7 @@ public class UpdateUtil {
           Boolean commitRequestSucceed = false;
           try{
             response = client.send(
-                getSimpleRequest("https://api.github.com/repos/XIAYM-gh/Nameless-DOS/commits/" + jo.getString("target_commitish")),
+                getSimpleRequest(apiAddr + "/repos/XIAYM-gh/Nameless-DOS/commits/" + jo.getString("target_commitish")),
                 HttpResponse.BodyHandlers.ofString()
                 );
 
@@ -95,7 +122,7 @@ public class UpdateUtil {
           }
           Logger.info("检查到更新! 请使用 checkupdate download 命令下载或通过以下地址下载:");
           if(commitRequestSucceed) Logger.info("更新信息: " + updateTitle);
-          Logger.info("https://github.com/XIAYM-gh/Nameless-DOS/releases/download/" + remote_version + "/ndos.jar");
+          Logger.info(ghproxyAddr + "https://github.com/XIAYM-gh/Nameless-DOS/releases/download/" + remote_version + "/ndos.jar");
         }
         return;
       } else {

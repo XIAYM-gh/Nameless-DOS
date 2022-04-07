@@ -13,17 +13,15 @@ public class NDOSMain {
   private static NDOSConsoleReader reader = new NDOSConsoleReader();
 
   public static void main(String[] args){
-
     List<String> arguments = Arrays.asList(args);
     if(arguments.contains("-debug")) NDOSAPI.DEBUG_MODE = true;
 
-    xconfig x = new xconfig("config.properties");
-
-    if(x.get("configuration-formatting", "true").equals("true")) ConfigFormatter.doFormat();
+    if(ConfigUtil.get("configuration-formatting", "true").equals("true")) ConfigFormatter.doFormat();
 
     AnsiConsole.systemInstall();
-
     showInfo();
+
+    ConfigUtil.init();
 
     Logger.info("正在加载插件..");
     PluginMain.init(false);

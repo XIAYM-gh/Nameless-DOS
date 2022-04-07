@@ -5,3 +5,4 @@
 *.swp
 /.gitignore
 /version.properties
+/config
