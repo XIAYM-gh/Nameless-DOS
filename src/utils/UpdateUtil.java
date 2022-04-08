@@ -96,6 +96,12 @@ public class UpdateUtil {
         if(down) {
           Logger.info("检查到更新! 正在下载...");
           Logger.info("此过程可能较慢，请耐心等待.");
+
+          new File("download_cache").delete();
+          Thread ct = new Thread(new cacheCounter());
+
+          ct.start();
+
           if(download(ghproxyAddr + "https://github.com/XIAYM-gh/Nameless-DOS/releases/download/" + remote_version + "/ndos.jar")){
             Logger.success("下载成功，正在覆盖NDOS主文件..");
             new File("download_cache").renameTo(new File(mainPath));
@@ -103,6 +109,9 @@ public class UpdateUtil {
           } else {
             Logger.err("下载失败，请稍后重试.");
           }
+
+          ct.interrupt();
+
         } else {
           String updateTitle = "";
           Boolean commitRequestSucceed = false;
@@ -150,13 +159,35 @@ public class UpdateUtil {
   }
 
   private static boolean download(String url) {
+    Logger.debug("任务开始下载: " + url);
+    
     try {
-      InputStream in = new URL(url).openStream();
+      URLConnection uc = new URL(url).openConnection();
+      Logger.info("资源大小: " + (uc.getContentLengthLong() > 0L ? uc.getContentLengthLong() / 1024 : "未知") + " KB");
+      InputStream in = uc.getInputStream();
       Files.copy(in, Paths.get("download_cache"), StandardCopyOption.REPLACE_EXISTING);
       return true;
     } catch(Exception e) {
       Logger.err("下载失败: " + e.getMessage());
     }
     return false;
+  }
+
+  private static class cacheCounter implements Runnable {
+    @Override
+    public void run() {
+      while (!Thread.currentThread().isInterrupted()) {
+        File f = new File("download_cache");
+        if(f.exists() && f.length() > 0) {
+
+          Logger.info("更新已下载: " + f.length() / 1024 + " KB");
+
+          try {
+            Thread.sleep(500);
+          } catch(Exception e) {}
+
+        }
+      }
+    }
   }
 }
