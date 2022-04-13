@@ -10,8 +10,13 @@ import java.util.*;
 
 public class File2Command {
   private static boolean running = false;
-
+  
   public static void run(String filePath){
+    boolean isParsingFunction = false;
+    String fN = "";
+    ArrayList<String> fCmd = new ArrayList<>();
+    HashMap<String, FunctionBox> fList = new HashMap<>();
+
     running = true;
 
     Path file = Paths.get(filePath);
@@ -30,6 +35,53 @@ public class File2Command {
         linec++;
         if(line.trim().equals("") || line.startsWith("#")) continue;
 
+        //尝试解析function
+        if(!isParsingFunction) {
+          if(line.trim().startsWith("function") && line.trim().endsWith("{")) {
+            String fn = line.trim().substring(8, line.trim().length()-1);
+            if(fn.trim().equals("")) {
+              Logger.err("定义函数时需要 函数名 !");
+              return;
+            }
+
+            fN = fn.trim();
+
+            isParsingFunction = true;
+            Logger.debug("F:START | " + line.trim());
+            continue;
+          }
+        }
+        
+        if(isParsingFunction) {
+          //END
+          if(line.trim().equals("}")) {
+            fList.put(fN, new FunctionBox(fN, fCmd));
+
+            fN = "";
+            fCmd = new ArrayList<>();
+            isParsingFunction = false;
+            Logger.debug("F:STOP | " + line.trim());
+            continue;
+          }
+
+          fCmd.add(line.trim());
+          Logger.debug("F:ADD | " + line.trim());
+          continue;
+        }
+
+        //如果是function
+        ArrayList<String> args = argumentParser.parse(line.trim());
+        
+        if(fList.containsKey(args.get(0))) {
+          ArrayList<String> fArgs = new ArrayList<String>();
+          fArgs.addAll(args);
+          fArgs.remove(0);
+
+          fList.get(args.get(0)).call(fArgs);
+          Logger.debug("F:CALL " + args.get(0) + " | " + line.trim());
+          continue;
+        }
+
         if(isInitialCommand(line.trim())) {
           parseCommand(line.trim());
           continue;
@@ -39,8 +91,7 @@ public class File2Command {
           Logger.err("命令不存在: (行 " + linec + ") " + line);
           return;
         } else {
-          NDOSCommand.NDOSCommandParser.parse(line.trim());
-          Thread.sleep(5);
+          runCommand(line.trim());
         }
       }
 
@@ -61,10 +112,18 @@ public class File2Command {
     System.gc();
   }
 
+  public static void runCommand(String cmd) {
+    if(NDOSCommand.NDOSCommandParser.isVaild(cmd)) {
+      NDOSCommand.NDOSCommandParser.parse(cmd);
+    } else {
+      Logger.err("未找到命令: " + cmd);
+    }
+  }
+
   public static boolean isInitialCommand(String trimed) {
     ArrayList<String> vaildCommands = new ArrayList<>();
     vaildCommands.addAll(Arrays.asList(
-          new String[]{"return", "if"}
+          new String[]{"return", "if", "stop_script", "run_command"}
           ));
 
     if(vaildCommands.contains(trimed.split(" ")[0])) return true;
@@ -73,17 +132,23 @@ public class File2Command {
   }
 
   public static void parseCommand(String trimed) {
-    if(trimed.toLowerCase().startsWith("return")) {
+    ArrayList<String> args = argumentParser.parse(trimed);
+
+    if("return".equals(args.get(0)) || "stop_script".equals(args.get(0))) {
       Logger.debug("脚本已停止运行.");
       running = false;
       return;
     }
 
-    if(trimed.toLowerCase().startsWith("if")) {
+    if("run_command".equals(args.get(0))) {
+      runCommand(trimed.substring(11).trim());
+      return;
+    }
+
+    if("if".equals(args.get(0))) {
       boolean hasElse = false;
       boolean useEquals = false;
 
-      ArrayList<String> args = argumentParser.parse(trimed);
       //if xxx
       if(args.size() < 5) {
         running = false;
@@ -113,7 +178,7 @@ public class File2Command {
           if(isInitialCommand(args.get(4))) {
             parseCommand(args.get(4));
           } else {
-            NDOSCommand.NDOSCommandParser.parse(args.get(4));
+            runCommand(args.get(4));
           }
         }
       } else {
@@ -121,7 +186,7 @@ public class File2Command {
           if(isInitialCommand(args.get(4))) {
             parseCommand(args.get(4));
           } else {
-            NDOSCommand.NDOSCommandParser.parse(args.get(4));
+            runCommand(args.get(4));
           }
         }
 
@@ -129,7 +194,7 @@ public class File2Command {
           if(isInitialCommand(args.get(6))) {
             parseCommand(args.get(6));
           } else {
-            NDOSCommand.NDOSCommandParser.parse(args.get(6));
+            runCommand(args.get(6));
           }
         }
       }
@@ -143,4 +208,48 @@ public class File2Command {
    * return - 直接退出
    * if <表达式1> <比较符> <表达式2> <如果成功执行的命令> (else <如果失败执行的命令>)
    */
+}
+
+class FunctionBox {
+  private String functionName;
+  private ArrayList<String> commands;
+  private HashMap<String, String> TempVars = new HashMap<>();
+
+  public FunctionBox(String name, ArrayList<String> cmds) {
+    this.functionName = name;
+    this.commands = cmds;
+  }
+
+  public void call() {
+    call(null);
+  }
+
+  public void call(ArrayList<String> args) {
+    Logger.debug("F:RUN | " + functionName);
+
+    //解析传入参数
+    if(args != null && args.size() > 0) {
+      for(int i = 0; i < args.size(); i++) {
+        TempVars.put(String.valueOf(i), args.get(i));
+      }
+    }
+
+    for(String line : commands) {
+      for(String temp : TempVars.keySet()) {
+        line = line.replaceAll("%" + temp + "%", TempVars.getOrDefault(temp, ""));
+      }
+
+      if(line.startsWith("return")) return;
+
+      if(File2Command.isInitialCommand(line.trim())) {
+        File2Command.parseCommand(line.trim());
+      } else {
+        File2Command.runCommand(line.trim());
+      }
+    }
+  }
+
+  public String getName() {
+    return this.functionName;
+  }
 }
