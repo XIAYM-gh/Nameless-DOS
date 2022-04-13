@@ -73,7 +73,7 @@ public class File2Command {
   }
 
   public static void parseCommand(String trimed) {
-    if(trimed.toLowerCase().equals("return")) {
+    if(trimed.toLowerCase().startsWith("return")) {
       Logger.debug("脚本已停止运行.");
       running = false;
       return;

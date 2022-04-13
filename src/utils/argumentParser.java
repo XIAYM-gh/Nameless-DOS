@@ -32,13 +32,13 @@ public class argumentParser {
         continue;
       }
 
-      if(item.startsWith("\"")) {
+      if(item.startsWith("\"") && !item.startsWith("\\\"")) {
         tmp.append(item.substring(1)).append(" ");
         merging = true;
         continue;
       }
 
-      if(item.endsWith("\"")) {
+      if(item.endsWith("\"") && !item.endsWith("\\\"")) {
         tmp.append(item.substring(0, item.length() - 1));
         output.add(tmp.toString());
         tmp.delete(0, tmp.length());
