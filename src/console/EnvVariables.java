@@ -20,4 +20,8 @@ public class EnvVariables {
   public static Set<String> getVarList() {
     return vars.keySet();
   }
+
+  public static boolean has(String key) {
+    return vars.containsKey(key);
+  }
 }

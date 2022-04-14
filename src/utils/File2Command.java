@@ -2,6 +2,7 @@ package cn.xiaym.utils;
 
 import cn.xiaym.ndos.command.*;
 import cn.xiaym.ndos.plugins.*;
+import cn.xiaym.ndos.console.*;
 
 import java.nio.file.*;
 import java.nio.charset.*;
@@ -10,14 +11,18 @@ import java.util.*;
 
 public class File2Command {
   private static boolean running = false;
+  static boolean in_function = false;
+  static String fun_name = "";
+  private static HashMap<String, FunctionBox> fList = new HashMap<>();
   
   public static void run(String filePath){
     boolean isParsingFunction = false;
     String fN = "";
     ArrayList<String> fCmd = new ArrayList<>();
-    HashMap<String, FunctionBox> fList = new HashMap<>();
+    fList = new HashMap<>();
 
     running = true;
+    in_function = false;
 
     Path file = Paths.get(filePath);
 
@@ -33,7 +38,7 @@ public class File2Command {
         if(!running) return;
 
         linec++;
-        if(line.trim().equals("") || line.startsWith("#")) continue;
+        if(line.trim().equals("") || line.trim().startsWith("#")) continue;
 
         //尝试解析function
         if(!isParsingFunction) {
@@ -77,8 +82,11 @@ public class File2Command {
           fArgs.addAll(args);
           fArgs.remove(0);
 
+          in_function = true;
+          fun_name = args.get(0);
           fList.get(args.get(0)).call(fArgs);
-          Logger.debug("F:CALL " + args.get(0) + " | " + line.trim());
+          Logger.debug("F:DONE " + args.get(0) + " | " + line.trim());
+          in_function = false;
           continue;
         }
 
@@ -146,55 +154,86 @@ public class File2Command {
     }
 
     if("if".equals(args.get(0))) {
+      String mode;
+
       boolean hasElse = false;
-      boolean useEquals = false;
+      boolean useCompare = false;
+      boolean useIsset = false;
+
+      int di = 5;
+
+      //判定比较符
+      switch(args.get(2)) {
+        case "equals":
+          mode = "equals";
+          useCompare = true;
+          break;
+        case "noteq":
+          mode = "noteq";
+          useCompare = true;
+          break;
+        case "isset":
+          mode = "isset";
+          useIsset = true;
+          break;
+        case "notset":
+          mode = "notset";
+          useIsset = true;
+          break;
+        default:
+          Logger.err("if 方法不匹配以下内容:");
+          Logger.err("equals, noteq, isset, notset");
+          running = false;
+          return;
+      }
+
+      if(useIsset) di--;
 
       //if xxx
-      if(args.size() < 5) {
+      if(args.size() < di) {
         running = false;
         Logger.err("if 命令需要更多的参数");
-        Logger.info("使用方法: if 表达式1 equals/noteq 表达式2 如果成功执行的命令 (else 如果失败执行的命令)");
-        Logger.info("可用双引号包围某个参数");
 
         return;
       }
 
       //if xxx e/n xxx xxx else
-      if(args.size() == 6) {
+      if(args.size() == (di + 1)) {
         running = false;
         Logger.err("else 后需要能够执行的命令.");
         return;
       }
 
       //判定是否有else
-      if(args.size() >= 6 && "else".equals(args.get(5))) hasElse = true;
+      if(args.size() >= (di + 1) && "else".equals(args.get(di))) hasElse = true;
 
-      //判定比较符为 equals 还是 noteq
-      if("equals".equals(args.get(2))) useEquals = true;
+      if(useCompare){
+        boolean useEquals = "equals".equals(mode);
 
-      if(args.get(1).equals(args.get(3))) {
-        //结果判断
-        if(useEquals) {
-          if(isInitialCommand(args.get(4))) {
-            parseCommand(args.get(4));
-          } else {
-            runCommand(args.get(4));
+        if(args.get(1).equals(args.get(di-2))) {
+          //结果判断
+          if(useEquals) {
+            if(isInitialCommand(args.get(4))) {
+              parseCommand(args.get(4));
+            } else {
+              runCommand(args.get(4));
+            }
           }
-        }
-      } else {
-        if(!useEquals) {
-          if(isInitialCommand(args.get(4))) {
-            parseCommand(args.get(4));
-          } else {
-            runCommand(args.get(4));
+        } else {
+          if(!useEquals) {
+            if(isInitialCommand(args.get(4))) {
+              parseCommand(args.get(4));
+            } else {
+              runCommand(args.get(4));
+            }
           }
-        }
 
-        if(hasElse) {
-          if(isInitialCommand(args.get(6))) {
-            parseCommand(args.get(6));
-          } else {
-            runCommand(args.get(6));
+          if(hasElse) {
+            if(isInitialCommand(args.get(6))) {
+              parseCommand(args.get(6));
+            } else {
+              runCommand(args.get(6));
+            }
           }
         }
       }
@@ -204,9 +243,11 @@ public class File2Command {
 
   }
 
-  /* 内置命令文档
-   * return - 直接退出
-   * if <表达式1> <比较符> <表达式2> <如果成功执行的命令> (else <如果失败执行的命令>)
+  /* IF 可使用的句型
+   * if var1 equals var2
+   * if var1 noteq var2
+   * if var1 isset
+   * if var1 notset
    */
 }
 
@@ -251,5 +292,9 @@ class FunctionBox {
 
   public String getName() {
     return this.functionName;
+  }
+
+  public Set<String> getTempVars() {
+    return this.TempVars.keySet();
   }
 }
