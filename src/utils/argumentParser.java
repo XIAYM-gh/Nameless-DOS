@@ -20,6 +20,7 @@ public class argumentParser {
     //初始化部分
     String[] split = origin.split(" ");
     ArrayList<String> output = new ArrayList<>();
+    ArrayList<String> result = new ArrayList<>();
     Boolean merging = false;
     StringBuilder tmp = new StringBuilder();
 
@@ -55,7 +56,11 @@ public class argumentParser {
       output.add(item);
     }
 
-    return output;
+    for (String s : output) {
+      result.add(s.replaceAll("\\\"", "\""));
+    }
+
+    return result;
   }
 
   public static String toArgStr(String[] args){

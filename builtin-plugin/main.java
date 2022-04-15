@@ -80,19 +80,15 @@ public class main extends JavaPlugin {
       return;
     }
 
-    String arg = cmd.substring(4);
-    if(!arg.contains("=")) {
-      String a = EnvVariables.get(arg);
+    ArrayList<String> args = argumentParser.parse(cmd);
+
+    if(args.size() <= 2) {
+      String a = EnvVariables.get(args.get(1));
       if(a != null) Logger.info(a);
       return;
     }
 
-    if(arg.equals("=") || arg.endsWith("=") || arg.startsWith("=")) return;
-
-    String[] args = arg.split("=");
-    if(args[0].equals("") || args[1].equals("")) return;
-
-    EnvVariables.set(args[0], arg.substring(args[0].length() + 1));
+    EnvVariables.set(args.get(1), args.get(2));
   }
 
   public void Echo(String cmd) {
@@ -110,11 +106,11 @@ public class main extends JavaPlugin {
     }
 
     if(!useFormatter) {
-      Logger.info(cmd.substring(5));
+      Logger.info(cmd.substring(5).replace("\\\"", "\""));
       return;
     }
 
-    Logger.info(McColorFormatter.toANSI(cmd.substring(5)));
+    Logger.info(McColorFormatter.toANSI(cmd.substring(5).replace("\\\"", "\"")));
   }
 
   public void Info(String msg) {

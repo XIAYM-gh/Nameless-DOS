@@ -11,8 +11,9 @@ import java.util.*;
 
 public class File2Command {
   private static boolean running = false;
+  
   static boolean in_function = false;
-  static String fun_name = "";
+  static String current_fun_name = "";
   private static HashMap<String, FunctionBox> fList = new HashMap<>();
   
   public static void run(String filePath){
@@ -83,10 +84,12 @@ public class File2Command {
           fArgs.remove(0);
 
           in_function = true;
-          fun_name = args.get(0);
+          current_fun_name = args.get(0);
           fList.get(args.get(0)).call(fArgs);
           Logger.debug("F:DONE " + args.get(0) + " | " + line.trim());
           in_function = false;
+          current_fun_name = "";
+
           continue;
         }
 
@@ -236,6 +239,16 @@ public class File2Command {
             }
           }
         }
+
+        return;
+      }
+
+      if(useIsset) {
+        ArrayList<String> argList = new ArrayList<>();
+        if(in_function) argList.addAll(fList.get(current_fun_name).getTempVars());
+        argList.addAll(EnvVariables.getVarList());
+
+        Logger.info(argList);
       }
 
       return;
@@ -268,6 +281,8 @@ class FunctionBox {
   public void call(ArrayList<String> args) {
     Logger.debug("F:RUN | " + functionName);
 
+    TempVars.clear();
+
     //解析传入参数
     if(args != null && args.size() > 0) {
       for(int i = 0; i < args.size(); i++) {
@@ -277,7 +292,7 @@ class FunctionBox {
 
     for(String line : commands) {
       for(String temp : TempVars.keySet()) {
-        line = line.replaceAll("%" + temp + "%", TempVars.getOrDefault(temp, ""));
+        line = line.replace("%" + temp + "%", TempVars.getOrDefault(temp, ""));
       }
 
       if(line.startsWith("return")) return;
