@@ -166,7 +166,7 @@ public class File2Command {
       int di = 5;
 
       //判定比较符
-      switch(args.get(2)) {
+      switch(args.get(2).toLowerCase()) {
         case "equals":
           mode = "equals";
           useCompare = true;
@@ -218,37 +218,55 @@ public class File2Command {
           if(useEquals) {
             if(isInitialCommand(args.get(4))) {
               parseCommand(args.get(4));
-            } else {
-              runCommand(args.get(4));
-            }
+            } else runCommand(args.get(4));
           }
         } else {
           if(!useEquals) {
             if(isInitialCommand(args.get(4))) {
               parseCommand(args.get(4));
-            } else {
-              runCommand(args.get(4));
-            }
+            } else runCommand(args.get(4));
           }
 
           if(hasElse) {
             if(isInitialCommand(args.get(6))) {
               parseCommand(args.get(6));
-            } else {
-              runCommand(args.get(6));
-            }
+            } else runCommand(args.get(6));
           }
         }
 
         return;
       }
 
+      //if var_name isset/notset do else do
       if(useIsset) {
+        boolean useIsMode = "isset".equals(mode);
+
         ArrayList<String> argList = new ArrayList<>();
         if(in_function) argList.addAll(fList.get(current_fun_name).getTempVars());
         argList.addAll(EnvVariables.getVarList());
 
-        Logger.info(argList);
+        if(useIsMode) {
+          if(argList.contains(args.get(1))) {
+            if(isInitialCommand(args.get(3))) {
+              parseCommand(args.get(3));
+            } else runCommand(args.get(3));
+          } else if(hasElse) {
+            if(isInitialCommand(args.get(5))) {
+              parseCommand(args.get(5));
+            } else runCommand(args.get(5));
+          }
+        } else {
+          //NOTSET
+          if(!argList.contains(args.get(1))) {
+            if(isInitialCommand(args.get(3))) {
+              parseCommand(args.get(3));
+            } else runCommand(args.get(3));
+          } else if(hasElse) {
+            if(isInitialCommand(args.get(5))) {
+              parseCommand(args.get(5));
+            } else runCommand(args.get(5));
+          }
+        }
       }
 
       return;
