@@ -5,6 +5,7 @@ import cn.xiaym.ndos.command.*;
 import cn.xiaym.ndos.*;
 
 import org.jline.terminal.*;
+import org.jline.builtins.*;
 import org.jline.reader.*;
 import org.jline.reader.impl.history.*;
 import org.jline.reader.impl.completer.*;
@@ -48,10 +49,13 @@ public class NDOSConsoleReader implements Runnable {
         LineReader lineReader = LineReaderBuilder.builder()
           .terminal(terminal)
           .history(hist)
-          .completer(new StringsCompleter(NDOSCommand.getCompleterArray()))
+          .completer(new ArgumentCompleter(
+                new StringsCompleter(NDOSCommand.getCompleterArray()),
+                new Completers.FileNameCompleter()
+                ))
           .build();
 
-        String line = new String(lineReader.readLine().getBytes(Charset.defaultCharset()));
+        String line = new String(lineReader.readLine("\r" + NDOSAPI.PROMPT_STRING).getBytes(Charset.defaultCharset()));
 
         if(line.length() > 0) {
           //实现命令托管
