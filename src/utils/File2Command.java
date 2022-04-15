@@ -313,7 +313,7 @@ class FunctionBox {
         line = line.replace("%" + temp + "%", TempVars.getOrDefault(temp, ""));
       }
 
-      if(line.startsWith("return")) return;
+      if(line.trim().startsWith("return")) return;
 
       if(File2Command.isInitialCommand(line.trim())) {
         File2Command.parseCommand(line.trim());
