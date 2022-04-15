@@ -1,5 +1,50 @@
+# 输出内容
 echo --format §a这是一个测试脚本!
 echo --format §0R§1a§2i§3n§4b§5o§6w
 echo --format §7w§8§9o§ab§bn§ci§da§eR
 echo --format §b§f粗§r§f体
 echo --format §o§f神§r§n§f奇§r§m§f效§r§k§f果
+
+# 设置函数
+function foo {
+    # 如果担心函数名与内置命令冲突可以使用 run_command 方法
+    run_command echo fooooooo
+
+    # 如果没有冲突则可以直接使用命令
+    echo ooooooof
+}
+
+foo
+
+function bar {
+    # 接收参数测试
+    if 0 isset "echo %0%"
+    if 1 notset "echo QAQ" else "echo %1%"
+}
+
+bar qwq awa
+
+function ifequals {
+    # 测试两个参数是否相等
+
+    # return 可以跳出当前函数 (在函数外使用相当于 stop_script)
+    if 0 notset return
+    if 1 notset return
+
+    if %0% equals %1% "echo 相等" else "echo 不相等"
+    # if %0% noteq %1% "echo 不相等" else "echo 相等"
+}
+
+ifequals qwq qwq
+ifequals qwq awa
+
+function signal {
+    # 在函数内强制退出当前脚本
+    stop_script
+}
+
+signal
+
+########
+这是目前的所有内容，示例将会持续更新.
+(已经退出脚本，无法读取这里的内容)
