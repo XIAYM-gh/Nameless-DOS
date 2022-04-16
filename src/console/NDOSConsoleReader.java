@@ -17,6 +17,7 @@ public class NDOSConsoleReader implements Runnable {
   static DefaultHistory hist;
   static Boolean running;
   static Terminal terminal;
+  static LineReader lineReader;
  
   //Init
   public NDOSConsoleReader() {
@@ -26,12 +27,13 @@ public class NDOSConsoleReader implements Runnable {
           .jansi(true)
           .jna(false);
 
-      if(new xconfig("config.priperties").get("use-dumb-terminal-on-windows", "true").equals("true") && System.getProperty("os.name").toLowerCase().contains("windows")) {
+      if(new xconfig("config.properties").get("use-dumb-terminal-on-windows", "true").equals("true") && System.getProperty("os.name").toLowerCase().contains("windows")) {
         Logger.info("当前正在使用Dumb Terminal, 部分快捷功能可能会被禁用.");
         terminalBuilder.dumb(true);
       }
 
       terminal = terminalBuilder.build();
+      lineReader = LineReaderBuilder.builder().terminal(terminal).build();
 
       hist = new DefaultHistory();
     } catch(java.io.IOException e) {
@@ -40,13 +42,17 @@ public class NDOSConsoleReader implements Runnable {
     }
   }
 
+  public static LineReader getCurrentReader() {
+    return lineReader == null ? LineReaderBuilder.builder().terminal(terminal).build() : lineReader ;
+  }
+
   @Override
   public void run() {
     try{
       running = true;
       
       while(running) { 
-        LineReader lineReader = LineReaderBuilder.builder()
+        lineReader = LineReaderBuilder.builder()
           .terminal(terminal)
           .history(hist)
           .completer(new ArgumentCompleter(
