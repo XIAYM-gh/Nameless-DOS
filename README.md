@@ -15,7 +15,7 @@
 [Github Actions main.yml](https://github.com/XIAYM-gh/Nameless-DOS/blob/main/.github/workflows/main.yml)
 
 #### 运行
-下载链接: [Github Actions](https://github.com/XIAYM-gh/Nameless-DOS/actions)<br>
+下载链接: [Releases](https://github.com/XIAYM-gh/Nameless-DOS/releases)<br>
 运行时请使用java 17，运行命令为:<br>
 > java -jar ndos.jar
 
