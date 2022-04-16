@@ -40,6 +40,8 @@ public class main extends JavaPlugin {
       Echo(cmd);
     } else if(cmd_.startsWith("status")) {
       showStatus();
+    } else if(cmd_.startsWith("reload")) {
+      PluginMain.reloadPlugins();
     } else if(cmd_.startsWith("clear")) {
       try {
         System.console().flush();

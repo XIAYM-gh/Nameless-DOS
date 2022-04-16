@@ -6,7 +6,7 @@ plugin.id=builtinPlugin
 plugin.main-class=ndosplugin.main
 plugin.depends=[""]
 # commands中填写命令id, cmd.命令id.reg-name中填入要注册的命令
-plugin.commands=["exit", "version", "plugins", "help", "set", "echo", "status", "clear", "script", "chkupd"]
+plugin.commands=["exit", "version", "plugins", "help", "set", "echo", "status", "clear", "script", "chkupd", "reload"]
 
 cmd.exit.reg-name=EXIT
 cmd.exit.desc=退出 NDOS
@@ -42,3 +42,7 @@ cmd.script.usage=script <脚本文件路径>
 
 cmd.chkupd.reg-name=CHECKUPDATE
 cmd.chkupd.desc=检查 NDOS 更新
+
+cmd.reload.reg-name=RELOAD
+cmd.reload.desc=重载加载的所有插件
+cmd.reload.tips=请在插件的 OnDisable() 方法中释放一切正在使用的资源，否则可能会发生加载错误

@@ -55,7 +55,19 @@ public class NDOSCommand {
     }
   }
 
-  public static int commandsCount(){
+  //插件无法调用此方法
+  public static void clearAllCommands() {
+    if(PluginMain.isPluginClass(new Throwable().getStackTrace()[1].getClassName())) return;
+
+    RegisteredCommands.clear();
+    CommandUsage.clear();
+    CommandTips.clear();
+    RegExecutors.clear();
+
+    Logger.debug("已经清除所有命令.");
+  }
+
+  public static int commandsCount() {
     return RegisteredCommands.size();
   }
 

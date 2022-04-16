@@ -158,6 +158,26 @@ public class PluginMain {
     }
   }
 
+  public static void reloadPlugins() {
+    for(JavaPlugin p: Plugins) {
+      try {
+        p.onDisable();
+      } catch(Exception e) {}
+    }
+
+    clearCache();
+    Loaders.clear();
+    Plugins.clear();
+    NDOSCommand.clearAllCommands();
+    inited = false;
+
+    System.gc();
+
+    init(false);
+
+    Logger.info("插件重载完成!");
+  }
+
   public static ArrayList<JavaPlugin> getPlugins(){
     return Plugins;
   }
@@ -168,6 +188,10 @@ public class PluginMain {
     }
 
     return null;
+  }
+
+  public static boolean isPluginClass(String forName) {
+    return !(getClass(forName) == null);
   }
 
   public static void addLoader(SimpleClassLoader lo){
