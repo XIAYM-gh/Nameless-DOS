@@ -7,9 +7,11 @@ import cn.xiaym.ndos.*;
 import org.jline.terminal.*;
 import org.jline.builtins.*;
 import org.jline.reader.*;
+import org.jline.reader.impl.*;
 import org.jline.reader.impl.history.*;
 import org.jline.reader.impl.completer.*;
 
+import java.util.*;
 import java.nio.charset.*;
 
 public class NDOSConsoleReader implements Runnable {
@@ -17,7 +19,7 @@ public class NDOSConsoleReader implements Runnable {
   static DefaultHistory hist;
   static Boolean running;
   static Terminal terminal;
-  static LineReader lineReader;
+  static LineReaderImpl lineReader;
  
   //Init
   public NDOSConsoleReader() {
@@ -32,10 +34,13 @@ public class NDOSConsoleReader implements Runnable {
         terminalBuilder.dumb(true);
       }
 
-      terminal = terminalBuilder.build();
-      lineReader = LineReaderBuilder.builder().terminal(terminal).build();
-
       hist = new DefaultHistory();
+
+      terminal = terminalBuilder.build();
+
+      lineReader = new LineReaderImpl(terminal, "NDOS", new HashMap<String, Object>());
+      lineReader.setHistory(hist);
+
     } catch(java.io.IOException e) {
       Logger.err("Terminal 初始化失败!");
       System.exit(-1);
@@ -51,15 +56,9 @@ public class NDOSConsoleReader implements Runnable {
     try{
       running = true;
       
-      while(running) { 
-        lineReader = LineReaderBuilder.builder()
-          .terminal(terminal)
-          .history(hist)
-          .completer(new ArgumentCompleter(
-                new StringsCompleter(NDOSCommand.getCompleterArray()),
-                new Completers.FileNameCompleter()
-                ))
-          .build();
+      while(running) {
+        lineReader.setCompleter(new ArgumentCompleter(new StringsCompleter(NDOSCommand.getCompleterArray()),
+              new Completers.FileNameCompleter()));
 
         String line = new String(lineReader.readLine("\r" + NDOSAPI.PROMPT_STRING).getBytes(Charset.defaultCharset()));
 
