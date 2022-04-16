@@ -149,7 +149,7 @@ public class NDOSCommand {
   public class NDOSCommandParser {
     public static void parse(String cmd) {
       for (String vkey : EnvVariables.getVarList()) {
-        cmd = cmd.replaceAll("%" + vkey + "%", EnvVariables.get(vkey));
+        cmd = cmd.replace("%" + vkey + "%", EnvVariables.get(vkey));
       }
 
       if(isVaild(cmd.toLowerCase())){

@@ -13,20 +13,20 @@ public class RandomIDGenerator {
   public static String generate(int len) {
     if(len > 256) len = 256;
 
-    String returnStr = "";
+    StringBuilder target = new StringBuilder();
     idList = new ArrayList<>();
     int i;
 
-    for(i=0;i<=idStr.length()-1;i++) {
+    for(i=0; i <= idStr.length() - 1; i++) {
       idList.add(String.valueOf(idStr.charAt(i)));
     }
 
     Random r = new Random();
 
-    for(i=0;i<len;i++) {
-      returnStr += idList.get(r.nextInt(idList.size()));
+    for(i=0; i < len; i++) {
+      target.append(idList.get(r.nextInt(idList.size())));
     }
 
-    return returnStr;
+    return target.toString();
   }
 }

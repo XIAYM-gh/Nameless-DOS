@@ -57,7 +57,7 @@ public class argumentParser {
     }
 
     for (String s : output) {
-      result.add(s.replaceAll("\\\"", "\""));
+      result.add(s.replace("\\\"", "\""));
     }
 
     return result;
