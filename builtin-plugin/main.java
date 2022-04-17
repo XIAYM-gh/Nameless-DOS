@@ -16,77 +16,92 @@ import static org.fusesource.jansi.Ansi.*;
 public class main extends JavaPlugin {
   
   @Override public void onCommand(String cmd){
-    String cmd_ = cmd.toLowerCase();
     ArrayList<String> args = argumentParser.parse(cmd);
+    
+    if(args.size() < 1) return;
 
-    if(cmd_.startsWith("exit")) {
-      NDOSMain.exit();
-    } else if(cmd_.startsWith("version")) {
-      NDOSMain.showInfo();
-    } else if(cmd_.startsWith("plugins")) {
-      int i = 1;
-      Logger.info("====== 插件列表 ======");
-      for(JavaPlugin p:PluginMain.getPlugins()) {
-        String name = p.getName();
-        String author = p.getAuthor();
-        String version = p.getVersion();
-        String id = p.getID();
-        Logger.info(i + ". " + p.getName() + " (" + id + ") - v" + version + " - by " + author);
-        i++;
-      }
-    } else if(cmd_.startsWith("help")) {
-      NDOSCommand.showHelp(cmd);
-    } else if(cmd_.startsWith("set")) {
-      Set(cmd);
-    } else if(cmd_.startsWith("echo")) {
-      Echo(cmd);
-    } else if(cmd_.startsWith("status")) {
-      showStatus();
-    } else if(cmd_.startsWith("reload")) {
-      PluginMain.reloadPlugins();
-    } else if(cmd_.startsWith("unload")) {
-      if(args.size() < 2) return;
-      PluginMain.unloadPlugin(args.get(1));
-    } else if(cmd_.startsWith("load")) {
-      if(args.size() < 2) return;
-      JavaPlugin p = PluginMain.loadPlugin(new File("plugins/" + args.get(1)));
+    switch(args.get(0).toLowerCase()){
+      case "exit":
+        NDOSMain.exit();
+        break;
+      case "version":
+        NDOSMain.showInfo();
+        break;
+      case "plugins":
+        int i = 1;
+        Logger.info("====== 插件列表 ======");
+        for(JavaPlugin p:PluginMain.getPlugins()) {
+          String name = p.getName();
+          String author = p.getAuthor();
+          String version = p.getVersion();
+          String id = p.getID();
+          Logger.info(i + ". " + p.getName() + " (" + id + ") - v" + version + " - by " + author);
+          i++;
+        }
+        break;
+      case "help":
+        NDOSCommand.showHelp(cmd);
+        break;
+      case "set":
+        Set(cmd);
+        break;
+      case "echo":
+        Echo(cmd);
+        break;
+      case "status":
+        showStatus();
+        break;
+      case "reload":
+        PluginMain.reloadPlugins();
+        break;
+      case "unload":
+        if(args.size() < 2) return;
+        PluginMain.unloadPlugin(args.get(1));
+        break;
+      case "load":
+        if(args.size() < 2) return;
+        JavaPlugin p = PluginMain.loadPlugin(new File("plugins/" + args.get(1)));
 
-      if(p == null) {
-        Logger.err("插件初始化失败.");
-        return;
-      }
+        if(p == null) {
+          Logger.err("插件初始化失败.");
+          return;
+        }
 
-      PluginMain.executePlugin(p);
+        PluginMain.executePlugin(p);
 
-      Logger.info("插件加载成功!");
-    } else if(cmd_.startsWith("clear")) {
-      try {
-        System.console().flush();
-        String os = System.getProperty("os.name").toLowerCase();
-        if(os.contains("windows")) {
-          new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-        } else if(os.contains("linux") || os.contains("gnu") || os.contains("freebsd") || os.contains("unix")) {
-          new ProcessBuilder("clear").inheritIO().start().waitFor();
-        } else Logger.info(ansi().eraseScreen().toString());
-      } catch(Exception e) {
-        Logger.err("清除屏幕失败!");
-        ErrorUtil.trace(e);
-        return;
-      }
+        Logger.info("插件加载成功!");
+        break;
+      case "clear":
+        try {
+          System.console().flush();
+          String os = System.getProperty("os.name").toLowerCase();
+          if(os.contains("windows")) {
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+          } else if(os.contains("linux") || os.contains("gnu") || os.contains("freebsd") || os.contains("unix")) {
+            new ProcessBuilder("clear").inheritIO().start().waitFor();
+          } else Logger.info(ansi().eraseScreen().toString());
+        } catch(Exception e) {
+          Logger.err("清除屏幕失败!");
+          ErrorUtil.trace(e);
+          return;
+        }
 
-      Logger.success("清除屏幕成功!");
-    } else if(cmd_.startsWith("script")) {
-      if(cmd.length() <= 7) {
-        Logger.warn("未知用法，请使用help script查看用法");
-        return;
-      }
-      File2Command.run(cmd.substring(7));
-    } else if(cmd_.startsWith("checkupdate")) {
-      if(cmd_.startsWith("checkupdate download")) {
-        UpdateUtil.checkUpdate(true);
-        return;
-      }
-      UpdateUtil.checkUpdate();
+        Logger.success("清除屏幕成功!");
+        break;
+      case "script":
+        if(args.size() > 2) {
+          Logger.warn("用法: script <文件>");
+          return;
+        }
+        File2Command.run(cmd.substring(7));
+        break;
+      case "checkupdate":
+        if(args.size() > 1 && "download".equals(args.get(1))) {
+          UpdateUtil.checkUpdate(true);
+          return;
+        }
+        UpdateUtil.checkUpdate();
+        break;
     }
   }
 
@@ -94,7 +109,7 @@ public class main extends JavaPlugin {
     if(cmd.trim().equals("set")) {
       Logger.info("变量列表:");
       for(String key:EnvVariables.getVarList()){
-        Logger.info(key + " = " + EnvVariables.get(key));
+        Logger.info(key + " 的值为 " + EnvVariables.get(key));
       }
       return;
     }
