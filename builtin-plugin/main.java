@@ -89,7 +89,7 @@ public class main extends JavaPlugin {
         Logger.success("清除屏幕成功!");
         break;
       case "script":
-        if(args.size() > 2) {
+        if(args.size() < 2) {
           Logger.warn("用法: script <文件>");
           return;
         }

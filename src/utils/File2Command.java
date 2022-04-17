@@ -4,6 +4,8 @@ import cn.xiaym.ndos.command.*;
 import cn.xiaym.ndos.plugins.*;
 import cn.xiaym.ndos.console.*;
 
+import static cn.xiaym.utils.LanguageUtil.Lang;
+
 import java.nio.file.*;
 import java.nio.charset.*;
 import java.io.*;
@@ -28,7 +30,7 @@ public class File2Command {
     Path file = Paths.get(filePath);
 
     if(!Files.exists(file)) {
-      Logger.warn("未找到脚本文件: " + filePath);
+      Logger.warn(Lang("script.not_found", filePath));
       return;
     }
 
@@ -46,7 +48,7 @@ public class File2Command {
           if(line.trim().startsWith("function") && line.trim().endsWith("{")) {
             String fn = line.trim().substring(8, line.trim().length()-1);
             if(fn.trim().equals("")) {
-              Logger.err("定义函数时需要 函数名 !");
+              Logger.err(Lang("script.function_name_required"));
               return;
             }
 
@@ -99,7 +101,7 @@ public class File2Command {
         }
 
         if(!NDOSCommand.NDOSCommandParser.isVaild(line.trim())){
-          Logger.err("命令不存在: (行 " + linec + ") " + line);
+          Logger.err(Lang("script.line_traced", linec, line));
           return;
         } else {
           runCommand(line.trim());
@@ -111,9 +113,8 @@ public class File2Command {
     } catch(IOException e) {
       Logger.err("错误: " + e.getMessage());
     } catch(StackOverflowError|ArrayIndexOutOfBoundsException e) {
-      Logger.err("严重错误: 内存可能不足");
-      Logger.err("请检查此脚本是否在不断调用其它脚本.");
-      Logger.info("正在尝试释放内存..");
+      Logger.err(Lang("script.oomerr"));
+      Logger.info(Lang("script.gc"));
       System.gc();
     } catch(Exception e) {
       ErrorUtil.trace(e);
@@ -127,7 +128,7 @@ public class File2Command {
     if(NDOSCommand.NDOSCommandParser.isVaild(cmd)) {
       NDOSCommand.NDOSCommandParser.parse(cmd);
     } else {
-      Logger.err("未找到命令: " + cmd);
+      Logger.err(Lang("script.not_command", cmd));
     }
   }
 
@@ -146,7 +147,7 @@ public class File2Command {
     ArrayList<String> args = argumentParser.parse(trimed);
 
     if("return".equals(args.get(0)) || "stop_script".equals(args.get(0))) {
-      Logger.debug("脚本已停止运行.");
+      Logger.debug(Lang("script.debug.stopped"));
       running = false;
       return;
     }
@@ -184,7 +185,7 @@ public class File2Command {
           useIsset = true;
           break;
         default:
-          Logger.err("if 方法不匹配以下内容:");
+          Logger.err(Lang("script.if.not_match"));
           Logger.err("equals, noteq, isset, notset");
           running = false;
           return;
@@ -195,7 +196,7 @@ public class File2Command {
       //if xxx
       if(args.size() < di) {
         running = false;
-        Logger.err("if 命令需要更多的参数");
+        Logger.err(Lang("script.if.more_var"));
 
         return;
       }
@@ -203,7 +204,7 @@ public class File2Command {
       //if xxx e/n xxx xxx else
       if(args.size() == (di + 1)) {
         running = false;
-        Logger.err("else 后需要能够执行的命令.");
+        Logger.err(Lang("script.if.require_cmd"));
         return;
       }
 

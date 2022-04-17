@@ -4,6 +4,8 @@ import cn.xiaym.utils.*;
 import cn.xiaym.ndos.plugins.*;
 import cn.xiaym.ndos.console.*;
 
+import static cn.xiaym.utils.LanguageUtil.Lang;
+
 import java.util.*;
 
 import org.json.*;
@@ -64,7 +66,7 @@ public class NDOSCommand {
     CommandTips.clear();
     RegExecutors.clear();
 
-    Logger.debug("已经清除所有命令.");
+    Logger.debug(Lang("cmd.debug.cleared"));
   }
 
   public static int commandsCount() {
@@ -89,7 +91,7 @@ public class NDOSCommand {
         if(cmdRegisterName != null && pluginID != null) RegExecutors.put(cmdRegisterName.toLowerCase(), pluginID);
       }
     } catch(Exception e) {
-      Logger.err("无法添加命令: "+e.getMessage());
+      Logger.err(Lang("cmd.add_failed", e.getMessage()));
     }
   }
 
@@ -106,7 +108,7 @@ public class NDOSCommand {
     int pageCount = (int) Math.floor(RegisteredCommands.size() /  10) + 1;
 
     if(cmd.trim().equals("help") || havepage) {
-      Info("§6====== 命令帮助 (第 " + page + "/" + pageCount + " 页) ======");
+      Info(Lang("cmd.help.title_list", page, pageCount));
       if(page < 0 || page > pageCount) return;
 
       Map<String, String> sorted = new TreeMap<>(RegisteredCommands);
@@ -118,12 +120,12 @@ public class NDOSCommand {
     } else {
       String cmdName = cmd.substring(5).toLowerCase();
       if(RegisteredCommands.containsKey(cmdName)){
-        Info("§6====== 命令 "+cmdName+" 的帮助 ======");
+        Info(Lang("cmd.help.title_one", cmdName));
         Info("§f" + RegisteredCommands.get(cmdName) + "\n");
-        if(CommandTips.containsKey(cmdName)) Info("§f提示:\n§d" + CommandTips.get(cmdName));
-        if(CommandUsage.containsKey(cmdName)) Info("§f用法:\n§d" + CommandUsage.get(cmdName));
+        if(CommandTips.containsKey(cmdName)) Info(Lang("cmd.help.tips") + ":\n§d" + CommandTips.get(cmdName));
+        if(CommandUsage.containsKey(cmdName)) Info(Lang("cmd.help.usage") + ":\n§d" + CommandUsage.get(cmdName));
       } else {
-        Logger.warn("已注册的命令列表中不存在此项.");
+        Logger.warn(Lang("cmd.help.err"));
       }
     }
   }
@@ -148,6 +150,8 @@ public class NDOSCommand {
   //sub-class Parser
   public class NDOSCommandParser {
     public static void parse(String cmd) {
+      cmd = cmd.trim();
+
       for (String vkey : EnvVariables.getVarList()) {
         cmd = cmd.replace("%" + vkey + "%", EnvVariables.get(vkey));
       }
@@ -158,14 +162,14 @@ public class NDOSCommand {
           try {
             executor.onCommand(cmd);
           } catch(Exception e) {
-            Logger.err("运行命令时发生非预期错误");
+            Logger.err(Lang("cmd.exception_throws"));
             ErrorUtil.trace(e);
           }
         } else {
-          Logger.err("无法找到能够执行此命令的插件，(如果可能)请联系插件作者");
+          Logger.err(Lang("cmd.no_executor"));
         }
       } else {
-        Logger.warn("未知命令.");
+        Logger.warn(Lang("cmd.unknown_cmd"));
       }
     }
 

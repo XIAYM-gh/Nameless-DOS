@@ -10,6 +10,8 @@ import java.lang.reflect.*;
 import cn.xiaym.utils.*;
 import cn.xiaym.ndos.command.*;
 
+import static cn.xiaym.utils.LanguageUtil.Lang;
+
 import org.json.*;
 
 public class PluginMain {
@@ -34,7 +36,7 @@ public class PluginMain {
         JavaPlugin pl = initPlugin(in, new File("Built-In"));
         Plugins.add(pl);
       } else {
-        Logger.warn("无法加载内置组件，请重新下载NDOS");
+        Logger.warn(Lang("pluginmanager.failed_builtin"));
       }
     } catch(Exception e) {}
 
@@ -58,7 +60,7 @@ public class PluginMain {
       loadPlugin(f);
     }
 
-    Logger.debug("插件初始化完成!");
+    Logger.debug(Lang("pluginmanager.debug.init_ok"));
 
     //再逐个执行 onEnable 方法
     //并检查依赖
@@ -78,7 +80,7 @@ public class PluginMain {
     }
 
     inited = true;
-    Logger.info("插件加载完成，耗时 " + (System.currentTimeMillis() - bef) + " ms");
+    Logger.info(Lang("pluginmanager.loaded_duration", System.currentTimeMillis() - bef));
   }
 
   private static JavaPlugin initPlugin(InputStream is, File file) {
@@ -94,9 +96,9 @@ public class PluginMain {
       p.setName(pc.getProperty("plugin.name", file.getName()));
       p.setVersion(pc.getProperty("plugin.version", "1.0.0"));
       p.setAuthor(pc.getProperty("plugin.author", "Nameless"));
-      p.setDesc(pc.getProperty("plugin.desc", "无描述"));
+      p.setDesc(pc.getProperty("plugin.desc", Lang("pluginmanager.no_desc")));
       p.setDepends(new JSONArray(pc.getProperty("plugin.depends", "[]")));
-      if (pc.getProperty("plugin.id") == null) Logger.warn("插件 \"" + p.getName() + "\" 的ID为空，正在使用随机id: " + randId);
+      if (pc.getProperty("plugin.id") == null) Logger.warn(Lang("pluginmanager.using_random_id", p.getName(), randId));
       p.setID(pc.getProperty("plugin.id", randId));
 
       NDOSCommand.processPlugin(pc, p.getID());
@@ -105,7 +107,7 @@ public class PluginMain {
       Logger.err(e.getMessage());
       return null;
     } catch(Exception e) {
-      Logger.err("构造插件失败: "+e.toString());
+      Logger.err(Lang("pluginmanager.failed_2construct") + ": "+e.toString());
       ErrorUtil.trace(e);
       return null;
     }
@@ -122,12 +124,12 @@ public class PluginMain {
 
         return p;
       } else {
-        Logger.err("分析失败: 插件文件 " + f.getName() + " 中不含有 plugin_meta 文件!");
+        Logger.err(Lang("pluginmanager.no_meta", f.getName()));
       }
     } catch(NoSuchFileException e) {
-      Logger.err("插件文件不存在!");
+      Logger.err(Lang("pluginmanager.not_found"));
     } catch(Exception e) {
-      Logger.err("加载插件文件 " + f.getName() + " 时出现问题!");
+      Logger.err(Lang("pluginmanager.exception_occurs", f.getName()));
       ErrorUtil.trace(e);
     }
 
@@ -140,7 +142,7 @@ public class PluginMain {
       String did = String.valueOf(plugin.getDepends().get(i));
       if(!did.equals("")) {
         if(getPlugin(did) == null) {
-          Logger.warn("插件 " + plugin.getName() + " 需要的依赖插件不存在: " + did + " ，正在禁用.");
+          Logger.warn(Lang("pluginmanager.no_dependence", plugin.getName(), did));
           try {
             ArrayList<SimpleClassLoader> removingList = new ArrayList<>();
 
@@ -169,7 +171,7 @@ public class PluginMain {
     try{
       if(!pBlackList.contains(plugin)) plugin.onEnable();
     } catch(Exception e) {
-      Logger.err("无法执行插件" + plugin.getName() + "的onEnable方法!");
+      Logger.err(Lang("pluginmanager.disable_failed", plugin.getName()));
       ErrorUtil.trace(e);
     }
   }
@@ -192,7 +194,7 @@ public class PluginMain {
 
     init(false);
 
-    Logger.info("插件重载完成!");
+    Logger.info(Lang("pluginmanager.reload_ok"));
   }
 
   public static void unloadPlugin(String pid) {
@@ -201,7 +203,7 @@ public class PluginMain {
     JavaPlugin p = getPlugin(pid);
 
     if (p == null) {
-      Logger.warn("未找到指定的插件，请检查您输入的插件ID是否正确");
+      Logger.warn("pluginmanager.unload_failed");
       return;
     }
 
@@ -224,7 +226,7 @@ public class PluginMain {
 
     System.gc();
 
-    Logger.info("插件卸载成功.");
+    Logger.info(Lang("pluginmanager.unload_ok"));
   }
 
   public static ArrayList<JavaPlugin> getPlugins(){
@@ -290,21 +292,21 @@ public class PluginMain {
         try {
           jarClass = super.loadClass(main);
         } catch(ClassNotFoundException|NullPointerException e) {
-          throw new ClassNotFoundException("无法找到插件主类: "+main);
+          throw new ClassNotFoundException(Lang("scl.find_failed", main));
         }
 
         Class<? extends JavaPlugin> pluginClass;
         try {
           pluginClass = jarClass.asSubclass(JavaPlugin.class);
         } catch(ClassCastException e) {
-          throw new ClassNotFoundException("插件主类未继承 JavaPlugin");
+          throw new ClassNotFoundException(Lang("scl.not_extends"));
         }
 
         plugin = pluginClass.getDeclaredConstructor().newInstance();
       } catch(IllegalAccessException e) {
-        throw new ClassNotFoundException("插件没有公共构造器.");
+        throw new ClassNotFoundException(Lang("scl.no_public_constructor"));
       } catch(InstantiationException e) {
-        throw new ClassNotFoundException("无法实例化插件.");
+        throw new ClassNotFoundException(Lang("scl.instant_failed"));
       }
 
       PluginMain.addLoader(this);

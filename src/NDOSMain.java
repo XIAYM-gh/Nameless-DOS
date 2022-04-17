@@ -5,6 +5,8 @@ import cn.xiaym.ndos.command.*;
 import cn.xiaym.utils.*;
 import cn.xiaym.ndos.plugins.*;
 
+import static cn.xiaym.utils.LanguageUtil.Lang;
+
 import org.fusesource.jansi.AnsiConsole;
 
 import java.util.*;
@@ -18,12 +20,14 @@ public class NDOSMain {
 
     if(ConfigUtil.get("configuration-formatting", "true").equals("true")) ConfigFormatter.doFormat();
 
+    LanguageUtil.prepare();
+
     AnsiConsole.systemInstall();
     showInfo();
 
     ConfigUtil.init();
 
-    Logger.info("正在加载插件..");
+    Logger.info(Lang("main.loading_plugin"));
     PluginMain.init(false);
 
     //开启读取线程
@@ -50,21 +54,21 @@ public class NDOSMain {
       return;
     } else if(NDOSAPI.COMMAND_PREFIX.equals("") && !NDOSAPI.PROMPT_STRING.equals("> ")){
       NDOSAPI.PROMPT_STRING = "> ";
-      Logger.info("[NDOS] 已经重置输入提示符，再次按下 ctrl + c/d 或输入 exit 退出.");
+      Logger.info("[NDOS] " + Lang("main.breaking.prompt_reset"));
     } else {
-      Logger.debug("[NDOS] 正在尝试执行命令: " + NDOSAPI.COMMAND_PREFIX + "exit");
+      Logger.debug("[NDOS] " + Lang("main.breaking.debug.executing") + ": " + NDOSAPI.COMMAND_PREFIX + "exit");
       NDOSCommand.NDOSCommandParser.parse(NDOSAPI.COMMAND_PREFIX + "exit");
       NDOSAPI.COMMAND_PREFIX = "";
       NDOSAPI.PROMPT_STRING = "> ";
-      Logger.info("[NDOS] 已经重置提示符状态，如果插件发生问题请重启 NDOS."); 
+      Logger.info("[NDOS] " + Lang("main.breaking.all_reset")); 
     }
 
-    Logger.debug("[NDOS] 正在重启命令读取线程..");
+    Logger.debug("[NDOS] " + Lang("main.breaking.debug.rest"));
     new Thread(reader).start();
   }
 
   public static void showInfo() {
-    Logger.info("Nameless DOS [版本 " + NDOSAPI.NDOS_VERSION + "]");
-    Logger.info("(C) 2022 Nameless Software Team 保留所有权利。");
+    Logger.info("Nameless DOS [" + Lang("version") + " " + NDOSAPI.NDOS_VERSION + "]");
+    Logger.info("(C) 2022 Nameless Software Team " + Lang("main.serv_right"));
   }
 }
