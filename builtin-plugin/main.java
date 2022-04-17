@@ -65,7 +65,7 @@ public class main extends JavaPlugin {
         String os = System.getProperty("os.name").toLowerCase();
         if(os.contains("windows")) {
           new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-        } else if(os.contains("linux")) {
+        } else if(os.contains("linux") || os.contains("gnu") || os.contains("freebsd") || os.contains("unix")) {
           new ProcessBuilder("clear").inheritIO().start().waitFor();
         } else Logger.info(ansi().eraseScreen().toString());
       } catch(Exception e) {
