@@ -113,7 +113,7 @@ public class File2Command {
     } catch(IOException e) {
       Logger.err("错误: " + e.getMessage());
     } catch(StackOverflowError|ArrayIndexOutOfBoundsException e) {
-      Logger.err(Lang("script.oomerr"));
+      Logger.err(Lang("script.oomerr").replace("\\n", "\n"));
       Logger.info(Lang("script.gc"));
       System.gc();
     } catch(Exception e) {
