@@ -8,6 +8,7 @@ import cn.xiaym.ndos.*;
 import cn.xiaym.utils.*;
 
 import java.util.*;
+import java.io.*;
 import java.lang.management.*;
 
 import static org.fusesource.jansi.Ansi.*;
@@ -16,6 +17,7 @@ public class main extends JavaPlugin {
   
   @Override public void onCommand(String cmd){
     String cmd_ = cmd.toLowerCase();
+    ArrayList<String> args = argumentParser.parse(cmd);
 
     if(cmd_.startsWith("exit")) {
       NDOSMain.exit();
@@ -42,6 +44,21 @@ public class main extends JavaPlugin {
       showStatus();
     } else if(cmd_.startsWith("reload")) {
       PluginMain.reloadPlugins();
+    } else if(cmd_.startsWith("unload")) {
+      if(args.size() < 2) return;
+      PluginMain.unloadPlugin(args.get(1));
+    } else if(cmd_.startsWith("load")) {
+      if(args.size() < 2) return;
+      JavaPlugin p = PluginMain.loadPlugin(new File("plugins/" + args.get(1)));
+
+      if(p == null) {
+        Logger.err("插件初始化失败.");
+        return;
+      }
+
+      PluginMain.executePlugin(p);
+
+      Logger.info("插件加载成功!");
     } else if(cmd_.startsWith("clear")) {
       try {
         System.console().flush();

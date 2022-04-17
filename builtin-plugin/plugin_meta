@@ -6,7 +6,7 @@ plugin.id=builtinPlugin
 plugin.main-class=ndosplugin.main
 plugin.depends=[""]
 # commands中填写命令id, cmd.命令id.reg-name中填入要注册的命令
-plugin.commands=["exit", "version", "plugins", "help", "set", "echo", "status", "clear", "script", "chkupd", "reload"]
+plugin.commands=["exit", "version", "plugins", "help", "set", "echo", "status", "clear", "script", "chkupd", "reload", "unl", "load"]
 
 cmd.exit.reg-name=EXIT
 cmd.exit.desc=退出 NDOS
@@ -24,7 +24,7 @@ cmd.help.usage=help [命令名]
 
 cmd.set.reg-name=SET
 cmd.set.desc=设置或显示一个临时的环境变量
-cmd.set.usage=set key=value\nset key
+cmd.set.usage=set key value\nset key
 
 cmd.echo.reg-name=ECHO
 cmd.echo.desc=向控制台输出文字
@@ -46,3 +46,13 @@ cmd.chkupd.desc=检查 NDOS 更新
 cmd.reload.reg-name=RELOAD
 cmd.reload.desc=重载加载的所有插件
 cmd.reload.tips=请在插件的 OnDisable() 方法中释放一切正在使用的资源，否则可能会发生加载错误
+
+cmd.unl.reg-name=unload
+cmd.unl.desc=卸载指定插件
+cmd.unl.usage=unload <插件 ID>
+cmd.unl.tips=如果插件id包含空格，请使用双引号包围
+
+cmd.load.reg-name=load
+cmd.load.desc=加载某个插件
+cmd.unl.usage=load <文件名>
+cmd.unl.tips=默认在当前路径下的 plugins 文件夹内寻找，如果需要加载其它位置的插件请使用相对路径

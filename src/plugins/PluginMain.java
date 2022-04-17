@@ -1,6 +1,7 @@
 package cn.xiaym.ndos.plugins;
 
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.jar.*;
 import java.net.*;
@@ -14,6 +15,8 @@ import org.json.*;
 public class PluginMain {
   private static ArrayList<JavaPlugin> Plugins = new ArrayList<>();
   private static ArrayList<SimpleClassLoader> Loaders = new ArrayList<>();
+  private static ArrayList<JavaPlugin> rl = new ArrayList<>();
+  private static ArrayList<JavaPlugin> pBlackList = new ArrayList<>();
   private static HashMap<String, Class<?>> cachedClasses = new HashMap<>();
   private static HashMap<String, Integer> undefinedClassFindCount = new HashMap<>();
   private static ClassLoader cl = new NullClass().getClass().getClassLoader();
@@ -52,20 +55,7 @@ public class PluginMain {
 
     //先加载所有插件类到内存(解决 API插件 问题)
     for (File f : pluginJars) {
-      try{
-        JarFile jar = new JarFile(f);
-        JarEntry entry = jar.getJarEntry("plugin_meta");
-        if(entry != null){
-          InputStream is = jar.getInputStream(entry);
-          JavaPlugin p = initPlugin(is, f);
-          Plugins.add(p);
-        } else {
-          Logger.err("分析失败: 插件文件 " + f.getName() + " 中不含有 plugin_meta 文件!");
-        }
-      } catch(Exception e) {
-        Logger.err("加载插件文件 " + f.getName() + " 时出现问题!");
-        ErrorUtil.trace(e);
-      }
+      loadPlugin(f);
     }
 
     Logger.debug("插件初始化完成!");
@@ -73,51 +63,14 @@ public class PluginMain {
     //再逐个执行 onEnable 方法
     //并检查依赖
     int co = 0;
-    ArrayList<JavaPlugin> rl = new ArrayList<>();
-    ArrayList<JavaPlugin> pBlackList = new ArrayList<>();
+    rl = new ArrayList<>();
+    pBlackList = new ArrayList<>();
 
     for (JavaPlugin plugin : Plugins) {
       co++;
       Logger.info("(" + co + "/" + Plugins.size() + ") " + plugin.getName() + " v" + plugin.getVersion());
 
-      for (int i=0; i<plugin.getDepends().length(); i++) {
-        if(!Plugins.contains(plugin) || pBlackList.contains(plugin)) break;
-        String did = String.valueOf(plugin.getDepends().get(i));
-        if(!did.equals("")) {
-          if(getPlugin(did) == null) {
-            Logger.warn("插件 " + plugin.getName() + " 需要的依赖插件不存在: " + did + " ，正在禁用.");
-            try {
-              ArrayList<SimpleClassLoader> removingList = new ArrayList<>();
-
-              for(SimpleClassLoader l:Loaders) {
-                if(l.getDeclaredPlugin().equals(plugin)) {
-                  //Loaders.remove(l);
-                  removingList.add(l);
-                }
-              }
-
-              for(SimpleClassLoader l:removingList) {
-                Loaders.remove(l);
-              }
-
-              rl.add(plugin);
-              pBlackList.add(plugin);
-              NDOSCommand.removeByPlugin(plugin);
-
-              plugin.onDisable();
-            } catch(Exception e) {
-              ErrorUtil.trace(e);
-            }
-          }
-        }
-      }
-
-      try{
-        if(!pBlackList.contains(plugin)) plugin.onEnable();
-      } catch(Exception e) {
-        Logger.err("无法执行插件" + plugin.getName() + "的onEnable方法!");
-        ErrorUtil.trace(e);
-      }
+      executePlugin(plugin);
     }
 
     for(JavaPlugin p:rl){
@@ -158,6 +111,70 @@ public class PluginMain {
     }
   }
 
+  public static JavaPlugin loadPlugin(File f) {
+    try {
+      JarFile jar = new JarFile(f);
+      JarEntry entry = jar.getJarEntry("plugin_meta");
+      if(entry != null){
+        InputStream is = jar.getInputStream(entry);
+        JavaPlugin p = initPlugin(is, f);
+        Plugins.add(p);
+
+        return p;
+      } else {
+        Logger.err("分析失败: 插件文件 " + f.getName() + " 中不含有 plugin_meta 文件!");
+      }
+    } catch(NoSuchFileException e) {
+      Logger.err("插件文件不存在!");
+    } catch(Exception e) {
+      Logger.err("加载插件文件 " + f.getName() + " 时出现问题!");
+      ErrorUtil.trace(e);
+    }
+
+    return null;
+  }
+
+  public static void executePlugin(JavaPlugin plugin) {
+    for (int i=0; i<plugin.getDepends().length(); i++) {
+      if(!Plugins.contains(plugin) || pBlackList.contains(plugin)) break;
+      String did = String.valueOf(plugin.getDepends().get(i));
+      if(!did.equals("")) {
+        if(getPlugin(did) == null) {
+          Logger.warn("插件 " + plugin.getName() + " 需要的依赖插件不存在: " + did + " ，正在禁用.");
+          try {
+            ArrayList<SimpleClassLoader> removingList = new ArrayList<>();
+
+            for(SimpleClassLoader l:Loaders) {
+              if(l.getDeclaredPlugin().equals(plugin)) {
+                removingList.add(l);
+              }
+            }
+
+            for(SimpleClassLoader l:removingList) {
+              Loaders.remove(l);
+            }
+
+            rl.add(plugin);
+            pBlackList.add(plugin);
+            NDOSCommand.removeByPlugin(plugin);
+
+            plugin.onDisable();
+          } catch(Exception e) {
+            ErrorUtil.trace(e);
+          }
+        }
+      }
+    }
+
+    try{
+      if(!pBlackList.contains(plugin)) plugin.onEnable();
+    } catch(Exception e) {
+      Logger.err("无法执行插件" + plugin.getName() + "的onEnable方法!");
+      ErrorUtil.trace(e);
+    }
+  }
+ 
+
   public static void reloadPlugins() {
     for(JavaPlugin p: Plugins) {
       try {
@@ -176,6 +193,38 @@ public class PluginMain {
     init(false);
 
     Logger.info("插件重载完成!");
+  }
+
+  public static void unloadPlugin(String pid) {
+    if(pid.equals("builtinPlugin")) return;
+
+    JavaPlugin p = getPlugin(pid);
+
+    if (p == null) {
+      Logger.warn("未找到指定的插件，请检查您输入的插件ID是否正确");
+      return;
+    }
+
+    NDOSCommand.removeByPlugin(p);
+
+    clearCache();
+
+    SimpleClassLoader lo = null;
+
+    for (SimpleClassLoader l : Loaders) {
+      if(l.getDeclaredPlugin() == p) {
+        lo = l;
+        break;
+      }
+    }
+
+    Loaders.remove(lo);
+
+    Plugins.remove(p);
+
+    System.gc();
+
+    Logger.info("插件卸载成功.");
   }
 
   public static ArrayList<JavaPlugin> getPlugins(){
@@ -263,6 +312,10 @@ public class PluginMain {
 
     public JavaPlugin getDeclaredPlugin() {
       return plugin;
+    }
+
+    public File getPluginFile() {
+      return file;
     }
 
     @Override protected Class<?> findClass(String n) throws ClassNotFoundException {
