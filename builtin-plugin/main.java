@@ -7,6 +7,8 @@ import cn.xiaym.ndos.*;
 
 import cn.xiaym.utils.*;
 
+import static cn.xiaym.utils.LanguageUtil.Lang;
+
 import java.util.*;
 import java.io.*;
 import java.lang.management.*;
@@ -29,7 +31,7 @@ public class main extends JavaPlugin {
         break;
       case "plugins":
         int i = 1;
-        Logger.info("====== 插件列表 ======");
+        Logger.info(Lang("bp.plugins.list_title"));
         for(JavaPlugin p:PluginMain.getPlugins()) {
           String name = p.getName();
           String author = p.getAuthor();
@@ -63,13 +65,13 @@ public class main extends JavaPlugin {
         JavaPlugin p = PluginMain.loadPlugin(new File("plugins/" + args.get(1)));
 
         if(p == null) {
-          Logger.err("插件初始化失败.");
+          Logger.err(Lang("bp.load.failed_2init"));
           return;
         }
 
         PluginMain.executePlugin(p);
 
-        Logger.info("插件加载成功!");
+        Logger.info(Lang("bp.load.success"));
         break;
       case "clear":
         try {
@@ -81,16 +83,16 @@ public class main extends JavaPlugin {
             new ProcessBuilder("clear").inheritIO().start().waitFor();
           } else Logger.info(ansi().eraseScreen().toString());
         } catch(Exception e) {
-          Logger.err("清除屏幕失败!");
+          Logger.err(Lang("bp.clear.failure"));
           ErrorUtil.trace(e);
           return;
         }
 
-        Logger.success("清除屏幕成功!");
+        Logger.success(Lang("bp.clear.success"));
         break;
       case "script":
         if(args.size() < 2) {
-          Logger.warn("用法: script <文件>");
+          Logger.warn(Lang("usage", "script <文件>"));
           return;
         }
         File2Command.run(cmd.substring(7));
@@ -107,9 +109,9 @@ public class main extends JavaPlugin {
 
   public void Set(String cmd) {
     if(cmd.trim().equals("set")) {
-      Logger.info("变量列表:");
+      Logger.info(Lang("bp.set.list_title"));
       for(String key:EnvVariables.getVarList()){
-        Logger.info(key + " 的值为 " + EnvVariables.get(key));
+        Logger.info(Lang("bp.set.list_child", key, EnvVariables.get(key)));
       }
       return;
     }
@@ -161,12 +163,12 @@ public class main extends JavaPlugin {
 
     ThreadMXBean thread = ManagementFactory.getThreadMXBean();
 
-    Info("§6 ====== NDOS 状态 ======");
-    Info("§a已用内存: \t\t§e" + headMemory.getUsed() / MB + " MB");
-    Info("§a当前线程数: \t§e" + thread.getThreadCount()); 
-    Info("§a已加载类总数: \t§e" + classLoad.getLoadedClassCount() + " §f(" + classLoad.getUnloadedClassCount() + " 个类已卸载)");
-    Info("§a已注册命令数: \t§e" + NDOSCommand.commandsCount());
-    Info("§a已加载插件数: \t§e" + PluginMain.getPlugins().size());
+    Info(Lang("bp.status.title"));
+    Info(Lang("bp.status.memory", headMemory.getUsed() / MB));
+    Info(Lang("bp.status.thread", thread.getThreadCount()));
+    Info(Lang("bp.status.class", classLoad.getLoadedClassCount(), classLoad.getUnloadedClassCount()));
+    Info(Lang("bp.status.command", NDOSCommand.commandsCount()));
+    Info(Lang("bp.status.plugin", PluginMain.getPlugins().size()));
   }
 
 }
