@@ -23,7 +23,9 @@ public class NDOSConsoleReader implements Runnable {
  
   //Init
   public NDOSConsoleReader() {
-    try{
+    try {
+      org.fusesource.jansi.AnsiConsole.systemInstall();
+
       TerminalBuilder terminalBuilder = TerminalBuilder.builder()
           .encoding(Charset.defaultCharset())
           .jansi(true)

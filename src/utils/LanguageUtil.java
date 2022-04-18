@@ -7,22 +7,22 @@ import java.io.*;
 import java.util.*;
 
 public class LanguageUtil {
+  static Path langPath = Paths.get("language.properties");
   static ClassLoader cl = new NullClass().getClass().getClassLoader();
   static xconfig Lang = new xconfig();
-  static Properties def = new Properties();
+  static xconfig def = new xconfig();
 
   static {
     try {
-      def.load(new InputStreamReader(
-            cl.getResourceAsStream("resources/language.properties"),
-            Charset.defaultCharset()
-            ));
-
+      //Prepare Default Language Properties
+      Path tempPath = Paths.get(".defaultLang.tmp");
+      Files.copy(cl.getResourceAsStream("resources/language.properties"), tempPath, StandardCopyOption.REPLACE_EXISTING);
+      def = new xconfig(".defaultLang.tmp");
+      Files.delete(tempPath);
     } catch(IOException e) {}
   }
 
   public static void prepare() {
-    Path langPath = Paths.get("language.properties");
     if(!Files.exists(langPath)) {
       try {
         Files.copy(cl.getResourceAsStream("resources/language.properties"), langPath);
@@ -37,7 +37,7 @@ public class LanguageUtil {
   public static String Lang(String key, Object... replaces) {
     prepare();
 
-    String ret = Lang.get(key, def.getProperty(key, key));
+    String ret = Lang.get(key, def.get(key, key));
 
     return String.format(ret, replaces).replace("\\t", "\t").replace("\\n", "\n");
   }
