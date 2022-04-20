@@ -22,7 +22,7 @@ public class LanguageUtil {
     } catch(IOException e) {}
   }
 
-  public static void prepare() {
+  public static synchronized void prepare() {
     if(!Files.exists(langPath)) {
       try {
         Files.copy(cl.getResourceAsStream("resources/language.properties"), langPath);
@@ -34,7 +34,7 @@ public class LanguageUtil {
     Lang = new xconfig("language.properties");
   }
 
-  public static String Lang(String key, Object... replaces) {
+  public static synchronized String Lang(String key, Object... replaces) {
     prepare();
 
     String ret = Lang.get(key, def.get(key, key));

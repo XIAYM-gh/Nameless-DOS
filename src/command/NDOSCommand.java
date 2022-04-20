@@ -17,24 +17,24 @@ public class NDOSCommand {
   private static HashMap<String, String> CommandTips = new HashMap<>();
   private static HashMap<String, String> RegExecutors = new HashMap<>();
 
-  private static void registerCommand(String cmd, String desc) {
+  private static synchronized void registerCommand(String cmd, String desc) {
     if(cmd != null) RegisteredCommands.put(cmd.toLowerCase(), desc);
   }
 
-  public static void registerCommand(String cmd, String desc, String pluginID) {
+  public static synchronized void registerCommand(String cmd, String desc, String pluginID) {
     registerCommand(cmd, desc);
     if(cmd != null && pluginID != null) RegExecutors.put(cmd.toLowerCase(), pluginID);
   }
 
-  public static void registerUsage(String cmd, String usage) {
+  public static synchronized void registerUsage(String cmd, String usage) {
     if(usage != null && cmd != null) CommandUsage.put(cmd.toLowerCase(), usage);
   }
 
-  public static void registerTip(String cmd, String tip) {
+  public static synchronized void registerTip(String cmd, String tip) {
     if(tip != null && cmd != null) CommandTips.put(cmd.toLowerCase(), tip);
   }
 
-  public static void deleteCommand(String cmd) {
+  public static synchronized void deleteCommand(String cmd) {
     cmd = cmd.toLowerCase();
 
     RegisteredCommands.remove(cmd);
@@ -43,7 +43,7 @@ public class NDOSCommand {
     RegExecutors.remove(cmd);
   }
 
-  public static void removeByPlugin(JavaPlugin p) {
+  public static synchronized void removeByPlugin(JavaPlugin p) {
     String pid = p.getID();
     ArrayList<String> rl = new ArrayList<>();
     for(String ckey : RegExecutors.keySet()) {
@@ -73,7 +73,7 @@ public class NDOSCommand {
     return RegisteredCommands.size();
   }
 
-  public static void processPlugin(Properties pc, String pluginID) {
+  public static synchronized void processPlugin(Properties pc, String pluginID) {
     try{
       JSONArray ja = new JSONArray(pc.getProperty("plugin.commands", "[]"));
       for (int i = 0; i < ja.length(); i++) {

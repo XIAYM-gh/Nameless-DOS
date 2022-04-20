@@ -24,7 +24,7 @@ public class PluginMain {
   private static ClassLoader cl = new NullClass().getClass().getClassLoader();
   private static boolean inited = false;
 
-  public static void init(Boolean BeSilent){
+  public static synchronized void init(Boolean BeSilent){
     if(inited) return;
 
     long bef = System.currentTimeMillis();
@@ -83,7 +83,7 @@ public class PluginMain {
     Logger.info(Lang("pluginmanager.loaded_duration", System.currentTimeMillis() - bef));
   }
 
-  private static JavaPlugin initPlugin(InputStream is, File file) {
+  private static synchronized JavaPlugin initPlugin(InputStream is, File file) {
     try{
       String randId = RandomIDGenerator.generate(16);
 
@@ -113,7 +113,7 @@ public class PluginMain {
     }
   }
 
-  public static JavaPlugin loadPlugin(File f) {
+  public static synchronized JavaPlugin loadPlugin(File f) {
     try {
       JarFile jar = new JarFile(f);
       JarEntry entry = jar.getJarEntry("plugin_meta");
@@ -136,7 +136,7 @@ public class PluginMain {
     return null;
   }
 
-  public static void executePlugin(JavaPlugin plugin) {
+  public static synchronized void executePlugin(JavaPlugin plugin) {
     for (int i=0; i<plugin.getDepends().length(); i++) {
       if(!Plugins.contains(plugin) || pBlackList.contains(plugin)) break;
       String did = String.valueOf(plugin.getDepends().get(i));
@@ -177,7 +177,7 @@ public class PluginMain {
   }
  
 
-  public static void reloadPlugins() {
+  public static synchronized void reloadPlugins() {
     for(JavaPlugin p: Plugins) {
       try {
         p.onDisable();
@@ -197,7 +197,7 @@ public class PluginMain {
     Logger.info(Lang("pluginmanager.reload_ok"));
   }
 
-  public static void unloadPlugin(String pid) {
+  public static synchronized void unloadPlugin(String pid) {
     if(pid.equals("builtinPlugin")) return;
 
     JavaPlugin p = getPlugin(pid);
@@ -245,7 +245,7 @@ public class PluginMain {
     return !(getClass(forName) == null);
   }
 
-  public static void addLoader(SimpleClassLoader lo){
+  public static synchronized void addLoader(SimpleClassLoader lo){
     Loaders.add(lo);
   }
 

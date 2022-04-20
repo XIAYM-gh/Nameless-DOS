@@ -4,14 +4,14 @@ import java.io.*;
 import java.util.*;
 
 public class ConfigUtil {
-  public static void init() {
+  public static synchronized void init() {
     File f = new File("config");
 
     if(f.exists() && !f.isDirectory()) f.delete();
     if(!f.exists()) f.mkdirs();
   }
 
-  public static boolean hasSection(String name) {
+  public static synchronized boolean hasSection(String name) {
     return new File("config/" + name + ".properties").exists();
   }
 
