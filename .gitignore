@@ -3,7 +3,7 @@
 /ndos.jar
 /plugins/
 *.swp
-/.gitignore
+!.gitignore
 /version.properties
 /config
 /public

@@ -9,6 +9,8 @@ import java.nio.file.*;
 
 import cn.xiaym.ndos.*;
 
+import static cn.xiaym.utils.LanguageUtil.Lang;
+
 import org.json.*;
 
 public class UpdateUtil { 
@@ -47,7 +49,7 @@ public class UpdateUtil {
 
     String mainPath = new NullClass().getClass().getProtectionDomain().getCodeSource().getLocation().getPath().split("!")[0];
     if(mainPath.charAt(2) == ':') mainPath = mainPath.substring(1);
-    if (down) Logger.debug("NDOS 主包路径: " + mainPath);
+    if (down) Logger.debug(Lang("uu.debug.main_pack", mainPath));
 
     try {
       ClassLoader mainPackCL = new NullClass().getClass().getClassLoader();
@@ -57,18 +59,18 @@ public class UpdateUtil {
         prop.load(in);
         local_version = Long.parseLong(prop.getProperty("version", "-1"));
       } else {
-        Logger.warn("由于您的版本未设定，所以无法进行更新检查。");
-        Logger.info("请前往 https://github.com/XIAYM-gh/Nameless-DOS/releases 手动更新.");
+        Logger.warn(Lang("uu.not_set"));
+        Logger.info(Lang("uu.manual", "https://github.com/XIAYM-gh/Nameless-DOS/releases"));
         return;
       }
 
       if(local_version == -1L) {
-        Logger.warn("检查更新已禁用!");
-        Logger.info("请前往 https://github.com/XIAYM-gh/Nameless-DOS/releases 手动更新.");
+        Logger.warn(Lang("uu.disabled"));
+        Logger.info(Lang("uu.manual", "https://github.com/XIAYM-gh/Nameless-DOS/releases"));
         return;
       }
     } catch(Exception e) {
-      Logger.err("更新时遇到错误.");
+      Logger.err(Lang("uu.failed"));
       ErrorUtil.trace(e);
       return;
     }
@@ -79,7 +81,7 @@ public class UpdateUtil {
       .followRedirects(HttpClient.Redirect.NORMAL)
       .build();
 
-    Logger.info("正在检查更新...");
+    Logger.info(Lang("uu.checking"));
 
     try {
       HttpResponse<String> response = client.send(
@@ -87,15 +89,15 @@ public class UpdateUtil {
           HttpResponse.BodyHandlers.ofString()
           );
 
-      if(response.statusCode() != 200) throw new IOException("状态码错误");
+      if(response.statusCode() != 200) throw new IOException(Lang("uu.status_code"));
 
       JSONObject jo = (JSONObject) new JSONArray(response.body()).get(0);
       long remote_version = Long.parseLong(jo.getString("tag_name"));
 
       if(remote_version > local_version) {
         if(down) {
-          Logger.info("检查到更新! 正在下载...");
-          Logger.info("此过程可能较慢，请耐心等待.");
+          Logger.info(Lang("uu.update_found_down"));
+          Logger.info(Lang("uu.update_await"));
 
           new File("download_cache").delete();
           Thread ct = new Thread(new cacheCounter());
@@ -103,11 +105,11 @@ public class UpdateUtil {
           ct.start();
 
           if(download(ghproxyAddr + "https://github.com/XIAYM-gh/Nameless-DOS/releases/download/" + remote_version + "/ndos.jar")){
-            Logger.success("下载成功，正在覆盖NDOS主文件..");
+            Logger.success(Lang("uu.success"));
             new File("download_cache").renameTo(new File(mainPath));
-            Logger.info("请重启 NDOS 以应用更新.");
+            Logger.info(Lang("uu.restart"));
           } else {
-            Logger.err("下载失败，请稍后重试.");
+            Logger.err(Lang("uu.down_failed"));
           }
 
           ct.interrupt();
@@ -126,27 +128,27 @@ public class UpdateUtil {
             updateTitle = new JSONObject(response.body()).getJSONObject("commit").getString("message");
             commitRequestSucceed = true;
           } catch(Exception e) {
-            Logger.err("获取详细信息时发生错误.");
+            Logger.err(Lang("uu.get_failed"));
             ErrorUtil.trace(e);
           }
-          Logger.info("检查到更新! 请使用 checkupdate download 命令下载或通过以下地址下载:");
-          if(commitRequestSucceed) Logger.info("更新信息: " + updateTitle);
+          Logger.info(Lang("uu.update_found"));
+          if(commitRequestSucceed) Logger.info(Lang("uu.info", updateTitle));
           Logger.info(ghproxyAddr + "https://github.com/XIAYM-gh/Nameless-DOS/releases/download/" + remote_version + "/ndos.jar");
         }
         return;
       } else {
-        Logger.info("没有更新版本.");
+        Logger.info(Lang("uu.no_update"));
         return;
       }
 
     } catch(JSONException e) {
-      Logger.err("检查更新失败: JSON解析错误，请检查您的网络。");
+      Logger.err(Lang("uu.check_failed", Lang("uu.exception.json")));
     } catch(IOException e) {
-      Logger.err("检查更新失败: 无法连接到 Github API 服务器.");
-      Logger.err("错误详情: " + e.getMessage());
+      Logger.err(Lang("uu.check_failed", Lang("uu.exception.api")));
+      Logger.err(Lang("uu.failed_detail", e.getMessage()));
     } catch(Exception e) {
-      Logger.err("检查更新失败: 未知错误: " + e.toString());
-      Logger.err("错误详情: " + e.getMessage());
+      Logger.err(Lang("uu.check_failed", Lang("uu.exception.unknown", e.toString())));
+      Logger.err(Lang("uu.failed_detail", e.getMessage()));
     }
   }
 
@@ -159,16 +161,16 @@ public class UpdateUtil {
   }
 
   private static boolean download(String url) {
-    Logger.debug("任务开始下载: " + url);
+    Logger.debug(Lang("uu.download.start", url));
     
     try {
       URLConnection uc = new URL(url).openConnection();
-      Logger.info("资源大小: " + (uc.getContentLengthLong() > 0L ? uc.getContentLengthLong() / 1024 : "未知") + " KB");
+      Logger.info(Lang("uu.download.size", (uc.getContentLengthLong() > 0L ? uc.getContentLengthLong() / 1024 : -1)));
       InputStream in = uc.getInputStream();
       Files.copy(in, Paths.get("download_cache"), StandardCopyOption.REPLACE_EXISTING);
       return true;
     } catch(Exception e) {
-      Logger.err("下载失败: " + e.getMessage());
+      Logger.err(Lang("uu.download.failed", e.getMessage()));
     }
     return false;
   }
@@ -180,7 +182,7 @@ public class UpdateUtil {
         File f = new File("download_cache");
         if(f.exists() && f.length() > 0) {
 
-          Logger.info("更新已下载: " + f.length() / 1024 + " KB");
+          Logger.info(Lang("uu.download.downloaded", f.length() / 1024));
 
           try {
             Thread.sleep(500);

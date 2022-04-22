@@ -18,14 +18,18 @@ public class File2Command {
   static String current_fun_name = "";
   private static HashMap<String, FunctionBox> fList = new HashMap<>();
   
-  public static void run(String filePath){
+  public static void run(String filePath) {
+    running = true;
+    in_function = false;
+
+    importScript(filePath);
+  }
+
+  private static void importScript(String filePath) {
     boolean isParsingFunction = false;
     String fN = "";
     ArrayList<String> fCmd = new ArrayList<>();
     fList = new HashMap<>();
-
-    running = true;
-    in_function = false;
 
     Path file = Paths.get(filePath);
 
@@ -41,12 +45,18 @@ public class File2Command {
         if(!running) return;
 
         linec++;
-        if(line.trim().equals("") || line.trim().startsWith("#")) continue;
+        String trimedLine = line.trim();
+
+        if(trimedLine.endsWith(";")) {
+          trimedLine = trimedLine.substring(0, trimedLine.length() - 1);
+        }
+
+        if(trimedLine.equals("") || trimedLine.startsWith("#")) continue;
 
         //尝试解析function
         if(!isParsingFunction) {
-          if(line.trim().startsWith("function") && line.trim().endsWith("{")) {
-            String fn = line.trim().substring(8, line.trim().length()-1);
+          if(trimedLine.startsWith("function") && trimedLine.endsWith("{")) {
+            String fn = trimedLine.substring(8, trimedLine.length()-1);
             if(fn.trim().equals("")) {
               Logger.err(Lang("script.function_name_required"));
               return;
@@ -55,30 +65,30 @@ public class File2Command {
             fN = fn.trim();
 
             isParsingFunction = true;
-            Logger.debug("F:START | " + line.trim());
+            Logger.debug("F:START | " + trimedLine);
             continue;
           }
         }
         
         if(isParsingFunction) {
           //END
-          if(line.trim().equals("}")) {
+          if(trimedLine.equals("}")) {
             fList.put(fN, new FunctionBox(fN, fCmd));
 
             fN = "";
             fCmd = new ArrayList<>();
             isParsingFunction = false;
-            Logger.debug("F:STOP | " + line.trim());
+            Logger.debug("F:STOP | " + trimedLine);
             continue;
           }
 
-          fCmd.add(line.trim());
-          Logger.debug("F:ADD | " + line.trim());
+          fCmd.add(trimedLine);
+          Logger.debug("F:ADD | " + trimedLine);
           continue;
         }
 
         //如果是function
-        ArrayList<String> args = argumentParser.parse(line.trim());
+        ArrayList<String> args = argumentParser.parse(trimedLine);
         
         if(fList.containsKey(args.get(0))) {
           ArrayList<String> fArgs = new ArrayList<String>();
@@ -88,23 +98,23 @@ public class File2Command {
           in_function = true;
           current_fun_name = args.get(0);
           fList.get(args.get(0)).call(fArgs);
-          Logger.debug("F:DONE " + args.get(0) + " | " + line.trim());
+          Logger.debug("F:DONE " + args.get(0) + " | " + trimedLine);
           in_function = false;
           current_fun_name = "";
 
           continue;
         }
 
-        if(isInitialCommand(line.trim())) {
-          parseCommand(line.trim());
+        if(isInitialCommand(trimedLine)) {
+          parseCommand(trimedLine);
           continue;
         }
 
-        if(!NDOSCommand.NDOSCommandParser.isVaild(line.trim())){
+        if(!NDOSCommand.NDOSCommandParser.isVaild(trimedLine)){
           Logger.err(Lang("script.line_traced", linec, line));
           return;
         } else {
-          runCommand(line.trim());
+          runCommand(trimedLine);
         }
       }
 
@@ -135,7 +145,9 @@ public class File2Command {
   public static boolean isInitialCommand(String trimed) {
     ArrayList<String> vaildCommands = new ArrayList<>();
     vaildCommands.addAll(Arrays.asList(
-          new String[]{"return", "if", "stop_script", "run_command"}
+          new String[]{"return", "if", 
+            "stop_script", "run_command",
+            "import"}
           ));
 
     if(vaildCommands.contains(trimed.split(" ")[0])) return true;
@@ -149,6 +161,15 @@ public class File2Command {
     if("return".equals(args.get(0)) || "stop_script".equals(args.get(0))) {
       Logger.debug(Lang("script.debug.stopped"));
       running = false;
+      return;
+    }
+
+    if("import".equals(args.get(0))) {
+      if(args.size() >= 2) {
+        importScript(args.get(1));
+      } else {
+        Logger.err(Lang("script.import_file_required"));
+      }
       return;
     }
 
@@ -314,12 +335,14 @@ class FunctionBox {
         line = line.replace("%" + temp + "%", TempVars.getOrDefault(temp, ""));
       }
 
-      if(line.trim().startsWith("return")) return;
+      String trimedLine = line.trim();
 
-      if(File2Command.isInitialCommand(line.trim())) {
-        File2Command.parseCommand(line.trim());
+      if(trimedLine.startsWith("return")) return;
+
+      if(File2Command.isInitialCommand(trimedLine)) {
+        File2Command.parseCommand(trimedLine);
       } else {
-        File2Command.runCommand(line.trim());
+        File2Command.runCommand(trimedLine);
       }
     }
   }
