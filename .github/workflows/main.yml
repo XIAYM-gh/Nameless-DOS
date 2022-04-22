@@ -26,7 +26,10 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: 解压运行库
-        run: unzip -qq -o ./Libs/Jar/*.jar -d ./
+        run: |
+          unzip -qq -o ./Libs/Jar/jansi.jar -d ./
+          unzip -qq -o ./Libs/Jar/jline3.jar -d ./
+          unzip -qq -o ./Libs/Jar/json.jar -d ./
 
       - name: 安装 JDK 17
         uses: actions/setup-java@v2
