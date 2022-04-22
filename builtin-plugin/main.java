@@ -95,7 +95,15 @@ public class main extends JavaPlugin {
           Logger.warn(Lang("usage", "script <文件>"));
           return;
         }
-        File2Command.run(cmd.substring(7));
+
+        String fileName = cmd.substring(7).trim();
+
+        if(fileName.toLowerCase().endsWith(".java")) {
+          DynamicCompiler.compile(fileName);
+        } else {
+          File2Command.run(fileName);
+        }
+
         break;
       case "checkupdate":
         if(args.size() > 1 && "download".equals(args.get(1))) {
