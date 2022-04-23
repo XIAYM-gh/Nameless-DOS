@@ -16,6 +16,8 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import static cn.xiaym.utils.LanguageUtil.Lang;
+
 /**
  * 动态编译Java源文件（编译入口）
  * <p><p>
@@ -57,7 +59,7 @@ public class DynamicJavaCompiler {
     public Map<String, byte[]> genClassBytes() {
         //清空编译异常
         compilerWarnings.clear();
-        compilerWarnings.clear();
+        compilerErrors.clear();
 
         DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
         DynamicJavaFileManager fileManager =
@@ -72,13 +74,13 @@ public class DynamicJavaCompiler {
             compile(diagnosticCollector, compilationTask);
             return classLoader.getBytes();
         } catch (Exception error) {
-            throw new RuntimeException("编译错误:" + getErrorMessage(compilerErrors));
+            throw new RuntimeException(getErrorMessage(compilerErrors));
         } finally {
             compilationUnits.clear();
             try {
                 fileManager.close();
             } catch (IOException e) {
-                throw new RuntimeException("无法关闭文件管理器", e);
+                throw new RuntimeException("Failed to close the file manager.", e);
             }
         }
     }
@@ -87,7 +89,7 @@ public class DynamicJavaCompiler {
     public Map<String, Class<?>> genClasses() {
         //清空编译异常
         compilerWarnings.clear();
-        compilerWarnings.clear();
+        compilerErrors.clear();
 
         DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
         DynamicJavaFileManager fileManager =
@@ -103,13 +105,13 @@ public class DynamicJavaCompiler {
             compile(diagnosticCollector, compilationTask);
             return classLoader.getClasses();
         } catch (Throwable error) {
-            throw new RuntimeException("编译失败:" + getErrorMessage(compilerErrors));
+            throw new RuntimeException(getErrorMessage(compilerErrors));
         } finally {
             compilationUnits.clear();
             try {
                 fileManager.close();
             } catch (IOException e) {
-                throw new RuntimeException("无法关闭文件管理器", e);
+                throw new RuntimeException("Failed to close the file manager.", e);
             }
         }
     }
@@ -134,7 +136,7 @@ public class DynamicJavaCompiler {
                 }
             }
             if (compilerErrors.size() > 0) {
-                throw new RuntimeException("编译错误:" + getErrorMessage(compilerErrors));
+                throw new RuntimeException(getErrorMessage(compilerErrors));
             }
         }
     }
@@ -142,7 +144,7 @@ public class DynamicJavaCompiler {
     private String getErrorMessage(List<Diagnostic<? extends JavaFileObject>> diagnostics) {
         return diagnostics.stream()
                 .map(diagnostic ->
-                        "行:" + diagnostic.getLineNumber() + " 信息:" + diagnostic.getMessage(Locale.getDefault()))
+                        Lang("sjava.line_num") + ": " + diagnostic.getLineNumber() + " " + Lang("sjava.message") + ": " + diagnostic.getMessage(Locale.getDefault()))
                 .collect(Collectors.joining("\r\n"));
     }
 }

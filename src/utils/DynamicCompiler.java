@@ -1,5 +1,7 @@
 package cn.xiaym.utils;
 
+import static cn.xiaym.utils.LanguageUtil.Lang;
+
 import org.glamey.compiler.*;
 
 import java.nio.file.*;
@@ -7,13 +9,20 @@ import java.util.*;
 import java.io.*;
 import java.lang.reflect.*;
 
+import javax.tools.*;
+
 public class DynamicCompiler {
   public static void compile(String fileName) {
+    if(ToolProvider.getSystemJavaCompiler() == null) {
+       Logger.err(Lang("sjava.no_compiler"));
+       return;
+    }
+
     String ClassName = fileName.trim().substring(0, fileName.trim().length() - 5); //Remove .java
     Path f = Paths.get(fileName);
     
     if(!Files.exists(f)) {
-      Logger.err("您指定的 Java 文件不存在.");
+      Logger.err(Lang("sjava.not_exists"));
       return;
     }
 
@@ -24,7 +33,7 @@ public class DynamicCompiler {
     try {
       contentList = Files.readAllLines(f);
     } catch(IOException e) {
-      Logger.err("无法读取指定文件内容.");
+      Logger.err(Lang("sjava.io_err"));
       return;
     }
 
@@ -37,25 +46,25 @@ public class DynamicCompiler {
       Class<?> compiledClass = (Class<?>) classMap.values().toArray()[0];;
 
       if(compiledClass == null) {
-        Logger.err("无法运行此 Class: 编译后的字节码为空.");
+        Logger.err(Lang("sjava.bytecode_null"));
         return;
       }
 
       Method m = compiledClass.getDeclaredMethod("main");
 
       if (m == null) {
-        Logger.err("此 Java 脚本不包含无参 main 方法，运行失败.");
+        Logger.err(Lang("sjava.no_main"));
         return;
       }
 
       m.setAccessible(true);
       m.invoke(compiledClass.getDeclaredConstructor().newInstance());
     } catch(RuntimeException e) {
-      Logger.err("编译失败!");
+      Logger.err(Lang("sjava.failed_2compile"));
       Logger.err(e.getMessage());
       return;
     } catch(Exception e) {
-      Logger.err("发生未知错误!");
+      Logger.err(Lang("sjava.failed"));
       Logger.err(e);
       return;
     }
