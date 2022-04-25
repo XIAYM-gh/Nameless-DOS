@@ -29,11 +29,11 @@ public class NDOSConsoleReader implements Runnable {
       TerminalBuilder terminalBuilder = TerminalBuilder.builder()
           .encoding(Charset.defaultCharset())
           .jansi(true)
-          .jna(false);
+          .jna(false)
+          .dumb(true);
 
-      if(new xconfig("config.properties").get("use-dumb-terminal-on-windows", "true").equals("true") && System.getProperty("os.name").toLowerCase().contains("windows")) {
-        Logger.info("当前正在使用Dumb Terminal, 部分快捷功能可能会被禁用.");
-        terminalBuilder.dumb(true);
+      if(new xconfig("config.properties").get("use-dumb-terminal-on-windows", "true").equals("false") || !System.getProperty("os.name").toLowerCase().contains("windows")) {
+        terminalBuilder.dumb(false);
       }
 
       hist = new DefaultHistory();
