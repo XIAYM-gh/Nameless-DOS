@@ -6,7 +6,7 @@ plugin.id=builtinPlugin
 plugin.main-class=ndosplugin.main
 plugin.depends=[""]
 # commands中填写命令id, cmd.命令id.reg-name中填入要注册的命令
-plugin.commands=["exit", "version", "plugins", "help", "set", "echo", "status", "clear", "script", "chkupd", "reload", "unl", "load"]
+plugin.commands=["exit", "version", "plugins", "help", "set", "echo", "status", "clear", "script", "chkupd", "reload", "unl", "load", "dir"]
 
 cmd.exit.reg-name=EXIT
 cmd.exit.desc=退出 NDOS
@@ -54,5 +54,9 @@ cmd.unl.tips=如果插件id包含空格，请使用双引号包围
 
 cmd.load.reg-name=load
 cmd.load.desc=加载某个插件
-cmd.unl.usage=load <文件名>
-cmd.unl.tips=默认在当前路径下的 plugins 文件夹内寻找，如果需要加载其它位置的插件请使用相对路径
+cmd.load.usage=load <文件名>
+cmd.load.tips=默认在当前路径下的 plugins 文件夹内寻找，如果需要加载其它位置的插件请使用相对路径
+
+cmd.dir.reg-name=dir
+cmd.dir.desc=显示指定目录下的文件
+cmd.dir.usage=dir [路径]

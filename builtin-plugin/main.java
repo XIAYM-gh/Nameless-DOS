@@ -25,10 +25,10 @@ public class main extends JavaPlugin {
     switch(args.get(0).toLowerCase()){
       case "exit":
         NDOSMain.exit();
-        break;
+        return;
       case "version":
         NDOSMain.showInfo();
-        break;
+        return;
       case "plugins":
         int i = 1;
         Logger.info(Lang("bp.plugins.list_title"));
@@ -40,26 +40,26 @@ public class main extends JavaPlugin {
           Logger.info(i + ". " + p.getName() + " (" + id + ") - v" + version + " - by " + author);
           i++;
         }
-        break;
+        return;
       case "help":
         NDOSCommand.showHelp(cmd);
-        break;
+        return;
       case "set":
         Set(cmd);
-        break;
+        return;
       case "echo":
         Echo(cmd);
-        break;
+        return;
       case "status":
         showStatus();
-        break;
+        return;
       case "reload":
         PluginMain.reloadPlugins();
-        break;
+        return;
       case "unload":
         if(args.size() < 2) return;
         PluginMain.unloadPlugin(args.get(1));
-        break;
+        return;
       case "load":
         if(args.size() < 2) return;
         JavaPlugin p = PluginMain.loadPlugin(new File("plugins/" + args.get(1)));
@@ -72,7 +72,7 @@ public class main extends JavaPlugin {
         PluginMain.executePlugin(p);
 
         Logger.info(Lang("bp.load.success"));
-        break;
+        return;
       case "clear":
         try {
           System.console().flush();
@@ -89,7 +89,7 @@ public class main extends JavaPlugin {
         }
 
         Logger.success(Lang("bp.clear.success"));
-        break;
+        return;
       case "script":
         if(args.size() < 2) {
           Logger.warn(Lang("usage", "script <文件>"));
@@ -104,14 +104,62 @@ public class main extends JavaPlugin {
           File2Command.run(fileName);
         }
 
-        break;
+        return;
       case "checkupdate":
         if(args.size() > 1 && "download".equals(args.get(1))) {
           UpdateUtil.checkUpdate(true);
           return;
         }
         UpdateUtil.checkUpdate();
-        break;
+        return;
+      case "dir":
+        String dir = "./";
+        if(args.size() > 1) dir = args.get(1);
+
+        File f = new File(dir);
+
+        if(!f.exists() || f.isFile()) {
+          Logger.err(Lang("bp.dir.not_found"));
+          return;
+        }
+
+        ArrayList<String> dirs = new ArrayList<>();
+        ArrayList<String> files = new ArrayList<>();
+        ArrayList<String> output = new ArrayList<>();
+
+        for(File sf : f.listFiles()) {
+          if(sf.isFile()) {
+            files.add(sf.getName());
+          } else dirs.add(sf.getName());
+        }
+
+        for(String d:dirs) {
+          output.add("§9" + d);
+        }
+
+        for(String file:files) {
+          output.add("§r" + file);
+        }
+
+        Logger.info(Lang("bp.dir.listing", dir));
+
+        StringBuilder sb = new StringBuilder();
+        int curr = 1;
+        for(String o:output) {
+          sb.append(o).append(" ");
+
+          if(curr == 5) {
+            sb.append("\n");
+            curr = 1;
+            continue;
+          }
+
+          curr++;
+        }
+
+        Logger.info(McColorFormatter.toANSI(sb.toString()));
+
+        return;
     }
   }
 
