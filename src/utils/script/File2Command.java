@@ -18,6 +18,7 @@ public class File2Command {
   static boolean in_function = false;
   static String current_fun_name = "";
   private static HashMap<String, functionBox> fList = new HashMap<>();
+  private static HashMap<String, String> locals = new HashMap<>();
   
   public static void run(String filePath) {
     running = true;
@@ -30,7 +31,8 @@ public class File2Command {
     boolean isParsingFunction = false;
     String fN = "";
     ArrayList<String> fCmd = new ArrayList<>();
-    fList = new HashMap<>();
+    fList.clear();
+    locals.clear();
 
     Path file = Paths.get(filePath);
 
@@ -47,6 +49,7 @@ public class File2Command {
 
         linec++;
         String trimedLine = line.trim();
+        trimedLine = replaceVar(trimedLine);
 
         if(trimedLine.endsWith(";")) {
           trimedLine = trimedLine.substring(0, trimedLine.length() - 1);
@@ -135,6 +138,19 @@ public class File2Command {
     System.gc();
   }
 
+  public static String replaceVar(String raw) {
+    for(String env : EnvVariables.getVarList()) {
+      raw = raw.replace("%" + env + "%", EnvVariables.get(env, ""));
+    }
+
+    for(String local : locals.keySet()) {
+      Logger.debug("Replacing: " + local + " " + getLocal(local));
+      raw = raw.replace("%" + local + "%", getLocal(local));
+    }
+
+    return raw;
+  }
+
   public static void runCommand(String cmd) {
     if(NDOSCommand.NDOSCommandParser.isVaild(cmd)) {
       NDOSCommand.NDOSCommandParser.parse(cmd);
@@ -148,7 +164,7 @@ public class File2Command {
     vaildCommands.addAll(Arrays.asList(
           new String[]{"return", "if", 
             "stop_script", "run_command",
-            "import"}
+            "import", "local"}
           ));
 
     if(vaildCommands.contains(trimed.split(" ")[0])) return true;
@@ -174,18 +190,39 @@ public class File2Command {
       return;
     }
 
+    if("local".equals(args.get(0))) {
+      if(args.size() < 3) return;
+
+      if("null".equals(args.get(2))) {
+        locals.remove(args.get(1));
+        return;
+      }
+
+      Logger.debug("Putting: " + args.get(1) + " " + args.get(2));
+      locals.put(args.get(1), args.get(2));
+      return;
+    }
+
     if("run_command".equals(args.get(0))) {
       runCommand(trimed.substring(11).trim());
       return;
     }
 
     if("if".equals(args.get(0))) {
-      If.If(args, fList, current_fun_name, in_function);
+      If.If(args, fList, current_fun_name, in_function, locals);
       return;
     }
   }
 
   public static void stop() {
     running = false;
+  }
+
+  public static HashMap<String, String> getLocals() {
+    return locals;
+  }
+
+  public static String getLocal(String key) {
+    return locals.getOrDefault(key, "");
   }
 }

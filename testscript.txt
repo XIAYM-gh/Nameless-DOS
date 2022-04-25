@@ -38,6 +38,11 @@ function ifequals {
 ifequals qwq qwq
 ifequals qwq awa
 
+# 设置本地函数
+local KEY value
+
+echo %KEY%
+
 function signal {
     # 在函数内强制退出当前脚本
     stop_script

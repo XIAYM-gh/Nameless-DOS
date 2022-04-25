@@ -17,6 +17,10 @@ public class EnvVariables {
     return vars.get(key);
   }
 
+  public static String get(String key, String def) {
+    return vars.getOrDefault(key, def);
+  }
+
   public static Set<String> getVarList() {
     return vars.keySet();
   }

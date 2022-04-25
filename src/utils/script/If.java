@@ -8,7 +8,7 @@ import cn.xiaym.ndos.console.*;
 import java.util.*;
 
 public class If {
-  public static void If(ArrayList<String> args, HashMap<String, functionBox> fList, String current_fun_name, boolean in_function) {
+  public static void If(ArrayList<String> args, HashMap<String, functionBox> fList, String current_fun_name, boolean in_function, HashMap<String, String> locals) {
     if("if".equals(args.get(0))) {
       String mode;
 
@@ -97,6 +97,7 @@ public class If {
         ArrayList<String> argList = new ArrayList<>();
         if(in_function) argList.addAll(fList.get(current_fun_name).getTempVars());
         argList.addAll(EnvVariables.getVarList());
+        argList.addAll(locals.keySet());
 
         if(useIsMode) {
           if(argList.contains(args.get(1))) {

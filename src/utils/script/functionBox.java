@@ -36,6 +36,11 @@ public class functionBox {
         line = line.replace("%" + temp + "%", TempVars.getOrDefault(temp, ""));
       }
 
+      for(String local : File2Command.getLocals().keySet()) {
+        Logger.debug("Replacing: " + local + " " + File2Command.getLocal(local));
+        line = line.replace("%" + local + "%", File2Command.getLocal(local));
+      }
+
       String trimedLine = line.trim();
 
       if(trimedLine.startsWith("return")) return;
