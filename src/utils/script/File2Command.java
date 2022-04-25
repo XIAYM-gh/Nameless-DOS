@@ -160,12 +160,11 @@ public class File2Command {
   }
 
   public static boolean isInitialCommand(String trimed) {
-    ArrayList<String> vaildCommands = new ArrayList<>();
-    vaildCommands.addAll(Arrays.asList(
+    List<String> vaildCommands = Arrays.asList(
           new String[]{"return", "if", 
             "stop_script", "run_command",
             "import", "local"}
-          ));
+          );
 
     if(vaildCommands.contains(trimed.split(" ")[0])) return true;
 
@@ -175,42 +174,35 @@ public class File2Command {
   public static void parseCommand(String trimed) {
     ArrayList<String> args = argumentParser.parse(trimed);
 
-    if("return".equals(args.get(0)) || "stop_script".equals(args.get(0))) {
-      Logger.debug(Lang("script.debug.stopped"));
-      running = false;
-      return;
-    }
+    if(args.size() < 1) return;
 
-    if("import".equals(args.get(0))) {
-      if(args.size() >= 2) {
-        importScript(args.get(1));
-      } else {
-        Logger.err(Lang("script.import_file_required"));
-      }
-      return;
-    }
-
-    if("local".equals(args.get(0))) {
-      if(args.size() < 3) return;
-
-      if("null".equals(args.get(2))) {
-        locals.remove(args.get(1));
+    switch(args.get(0)){
+      case "return":
+      case "stop_script":
+        Logger.debug(Lang("script.debug.stopped"));
+        running = false;
         return;
-      }
+      case "import":
+        if(args.size() >= 2) {
+          importScript(args.get(1));
+        } else Logger.err(Lang("script.import_file_required"));
+        return;
+      case "local":
+        if(args.size() < 3) return;
 
-      Logger.debug("Putting: " + args.get(1) + " " + args.get(2));
-      locals.put(args.get(1), args.get(2));
-      return;
-    }
+        if("null".equals(args.get(2))) {
+          locals.remove(args.get(1));
+          return;
+        }
 
-    if("run_command".equals(args.get(0))) {
-      runCommand(trimed.substring(11).trim());
-      return;
-    }
-
-    if("if".equals(args.get(0))) {
-      If.If(args, fList, current_fun_name, in_function, locals);
-      return;
+        locals.put(args.get(1), args.get(2));
+        return;
+      case "run_command":
+        runCommand(trimed.substring(11).trim());
+        return;
+      case "if":
+        If.If(args, fList, current_fun_name, in_function, locals);
+        return;
     }
   }
 
