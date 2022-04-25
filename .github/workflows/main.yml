@@ -39,7 +39,7 @@ jobs:
 
       - name: 尝试编译项目
         run: |
-            javac -d . -cp Libs/Jar/jansi.jar:Libs/Jar/jline3.jar:Libs/Jar/json.jar -encoding UTF-8 src/*.java src/console/*.java src/utils/*.java src/command/*.java src/plugins/*.java builtin-plugin/*.java Libs/Compile/java-compiler/src/*.java
+            javac -d . -cp Libs/Jar/jansi.jar:Libs/Jar/jline3.jar:Libs/Jar/json.jar -encoding UTF-8 src/*.java src/console/*.java src/utils/*.java src/command/*.java src/plugins/*.java src/utils/script/*.java builtin-plugin/*.java Libs/Compile/java-compiler/src/*.java
             echo "Manifest-Version: 1.0" > mf.txt
             echo "Main-Class: cn.xiaym.ndos.NDOSMain" >> mf.txt
             echo "version=${{ github.run_id }}" > version.properties

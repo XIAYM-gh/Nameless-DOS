@@ -3,6 +3,7 @@ package cn.xiaym.utils;
 import cn.xiaym.ndos.command.*;
 import cn.xiaym.ndos.plugins.*;
 import cn.xiaym.ndos.console.*;
+import cn.xiaym.utils.script.*;
 
 import static cn.xiaym.utils.LanguageUtil.Lang;
 
@@ -16,7 +17,7 @@ public class File2Command {
   
   static boolean in_function = false;
   static String current_fun_name = "";
-  private static HashMap<String, FunctionBox> fList = new HashMap<>();
+  private static HashMap<String, functionBox> fList = new HashMap<>();
   
   public static void run(String filePath) {
     running = true;
@@ -73,7 +74,7 @@ public class File2Command {
         if(isParsingFunction) {
           //END
           if(trimedLine.equals("}")) {
-            fList.put(fN, new FunctionBox(fN, fCmd));
+            fList.put(fN, new functionBox(fN, fCmd));
 
             fN = "";
             fCmd = new ArrayList<>();
@@ -179,179 +180,12 @@ public class File2Command {
     }
 
     if("if".equals(args.get(0))) {
-      String mode;
-
-      boolean hasElse = false;
-      boolean useCompare = false;
-      boolean useIsset = false;
-
-      int di = 5;
-
-      //判定比较符
-      switch(args.get(2).toLowerCase()) {
-        case "equals":
-          mode = "equals";
-          useCompare = true;
-          break;
-        case "noteq":
-          mode = "noteq";
-          useCompare = true;
-          break;
-        case "isset":
-          mode = "isset";
-          useIsset = true;
-          break;
-        case "notset":
-          mode = "notset";
-          useIsset = true;
-          break;
-        default:
-          Logger.err(Lang("script.if.not_match"));
-          Logger.err("equals, noteq, isset, notset");
-          running = false;
-          return;
-      }
-
-      if(useIsset) di--;
-
-      //if xxx
-      if(args.size() < di) {
-        running = false;
-        Logger.err(Lang("script.if.more_var"));
-
-        return;
-      }
-
-      //if xxx e/n xxx xxx else
-      if(args.size() == (di + 1)) {
-        running = false;
-        Logger.err(Lang("script.if.require_cmd"));
-        return;
-      }
-
-      //判定是否有else
-      if(args.size() >= (di + 1) && "else".equals(args.get(di))) hasElse = true;
-
-      if(useCompare){
-        boolean useEquals = "equals".equals(mode);
-
-        if(args.get(1).equals(args.get(di-2))) {
-          //结果判断
-          if(useEquals) {
-            if(isInitialCommand(args.get(4))) {
-              parseCommand(args.get(4));
-            } else runCommand(args.get(4));
-          }
-        } else {
-          if(!useEquals) {
-            if(isInitialCommand(args.get(4))) {
-              parseCommand(args.get(4));
-            } else runCommand(args.get(4));
-          }
-
-          if(hasElse) {
-            if(isInitialCommand(args.get(6))) {
-              parseCommand(args.get(6));
-            } else runCommand(args.get(6));
-          }
-        }
-
-        return;
-      }
-
-      //if var_name isset/notset do else do
-      if(useIsset) {
-        boolean useIsMode = "isset".equals(mode);
-
-        ArrayList<String> argList = new ArrayList<>();
-        if(in_function) argList.addAll(fList.get(current_fun_name).getTempVars());
-        argList.addAll(EnvVariables.getVarList());
-
-        if(useIsMode) {
-          if(argList.contains(args.get(1))) {
-            if(isInitialCommand(args.get(3))) {
-              parseCommand(args.get(3));
-            } else runCommand(args.get(3));
-          } else if(hasElse) {
-            if(isInitialCommand(args.get(5))) {
-              parseCommand(args.get(5));
-            } else runCommand(args.get(5));
-          }
-        } else {
-          //NOTSET
-          if(!argList.contains(args.get(1))) {
-            if(isInitialCommand(args.get(3))) {
-              parseCommand(args.get(3));
-            } else runCommand(args.get(3));
-          } else if(hasElse) {
-            if(isInitialCommand(args.get(5))) {
-              parseCommand(args.get(5));
-            } else runCommand(args.get(5));
-          }
-        }
-      }
-
+      If.If(args, fList, current_fun_name, in_function);
       return;
     }
-
   }
 
-  /* IF 可使用的句型
-   * if var1 equals var2
-   * if var1 noteq var2
-   * if var1 isset
-   * if var1 notset
-   */
-}
-
-class FunctionBox {
-  private String functionName;
-  private ArrayList<String> commands;
-  private HashMap<String, String> TempVars = new HashMap<>();
-
-  public FunctionBox(String name, ArrayList<String> cmds) {
-    this.functionName = name;
-    this.commands = cmds;
-  }
-
-  public void call() {
-    call(null);
-  }
-
-  public void call(ArrayList<String> args) {
-    Logger.debug("F:RUN | " + functionName);
-
-    TempVars.clear();
-
-    //解析传入参数
-    if(args != null && args.size() > 0) {
-      for(int i = 0; i < args.size(); i++) {
-        TempVars.put(String.valueOf(i), args.get(i));
-      }
-    }
-
-    for(String line : commands) {
-      for(String temp : TempVars.keySet()) {
-        line = line.replace("%" + temp + "%", TempVars.getOrDefault(temp, ""));
-      }
-
-      String trimedLine = line.trim();
-
-      if(trimedLine.startsWith("return")) return;
-
-      if(File2Command.isInitialCommand(trimedLine)) {
-        File2Command.parseCommand(trimedLine);
-      } else {
-        File2Command.runCommand(trimedLine);
-      }
-    }
-  }
-
-  public String getName() {
-    return this.functionName;
-  }
-
-  public Set<String> getTempVars() {
-    return this.TempVars.keySet();
+  public static void stop() {
+    running = false;
   }
 }
