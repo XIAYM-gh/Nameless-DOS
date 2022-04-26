@@ -9,12 +9,16 @@ import static cn.xiaym.utils.LanguageUtil.Lang;
 
 import org.fusesource.jansi.AnsiConsole;
 
+import java.io.*;
 import java.util.*;
 
 public class NDOSMain {
-  private static NDOSConsoleReader reader = new NDOSConsoleReader();
+  private static PrintStream originOut = System.out;
+  private static NDOSConsoleReader reader;
 
   public static void main(String[] args){
+    reader = new NDOSConsoleReader();
+
     List<String> arguments = Arrays.asList(args);
     if(arguments.contains("-debug")) NDOSAPI.DEBUG_MODE = true;
 
@@ -22,7 +26,9 @@ public class NDOSMain {
 
     LanguageUtil.prepare();
 
-    AnsiConsole.systemInstall();
+    Logger.init();
+
+    //AnsiConsole.systemInstall();
     showInfo();
 
     ConfigUtil.init();
@@ -43,7 +49,6 @@ public class NDOSMain {
       }
     }
 
-    System.out.println("\n");
     System.out.flush();
     System.exit(0);
   }

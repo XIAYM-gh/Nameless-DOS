@@ -7,14 +7,28 @@ import java.time.*;
 import java.time.format.*;
 
 import cn.xiaym.ndos.*;
+import cn.xiaym.ndos.console.*;
 
 import org.fusesource.jansi.*;
 import static org.fusesource.jansi.Ansi.*;
 import static org.fusesource.jansi.Ansi.Color.*;
 
 public final class Logger {
+  private static Boolean inited = false;
+  private static Console console = System.console();
+
+  public static void init() {
+    if(inited) return;
+
+    System.setOut(new outObserver("STDOUT"));
+    System.setErr(new outObserver("STDERR"));
+
+    inited = true;
+  }
+
   private static void out(String str, Level level, String typecolor, String textcolor){
     String[] str_split = str.split("\n");
+
     for(String str_:str_split){
       String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
@@ -60,9 +74,7 @@ public final class Logger {
   }
 
   public static void flush(){
-    System.out.flush();
-    System.err.flush();
-    System.out.print("\r" + NDOSAPI.PROMPT_STRING);
+    AnsiConsole.out().print("\r" + NDOSAPI.PROMPT_STRING);
   }
 
   public static Color ConvertColor(String colorName){
@@ -107,7 +119,36 @@ public final class Logger {
     public String getFlag() {
       return flag;
     }
+  }
 
+  private final static class outObserver extends PrintStream {
+    private String c;
+
+    public outObserver(String channelName) {
+      super(new ByteArrayOutputStream());
+      this.c = channelName;
     }
 
+    public void print(String o) { println(o); }
+    public void print(Integer o) { println(o); }
+    public void print(Character o) { println(o); }
+    public void print(Long o) { println(o); }
+    public void print(Boolean o) { println(o); }
+    public void print(Float o) { println(o); }
+    public void print(Double o) { println(o); }
+    public void print(Object o) { println(o); }
+
+    public void println(String o) { Logger.info(p(o)); }
+    public void println(Integer o) { Logger.info(p(o)); }
+    public void println(Character o) { Logger.info(p(o)); }
+    public void println(Long o) { Logger.info(p(o)); }
+    public void println(Boolean o) { Logger.info(p(o)); }
+    public void println(Float o) { Logger.info(p(o)); }
+    public void println(Double o) { Logger.info(p(o)); }
+    public void println(Object o) { Logger.info(p(o)); }
+
+    private String p(Object o) {
+      return "[" + c + "] " + o;
+    }
+  }
 }
