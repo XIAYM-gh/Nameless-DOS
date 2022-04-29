@@ -73,6 +73,10 @@ public final class Logger {
     if(NDOSAPI.DEBUG_MODE) Logger.out(String.valueOf(obj), Level.DEBUG, "blue", "default");
   }
 
+  public static void info(Object obj, String prefix) {
+    for(String s:String.valueOf(obj).split("\n")) Logger.info("[" + prefix + "] " + s);
+  }
+
   public static void flush(){
     AnsiConsole.out().print("\r" + NDOSAPI.PROMPT_STRING);
   }
@@ -138,17 +142,14 @@ public final class Logger {
     public void print(Double o) { println(o); }
     public void print(Object o) { println(o); }
 
-    public void println(String o) { Logger.info(p(o)); }
-    public void println(Integer o) { Logger.info(p(o)); }
-    public void println(Character o) { Logger.info(p(o)); }
-    public void println(Long o) { Logger.info(p(o)); }
-    public void println(Boolean o) { Logger.info(p(o)); }
-    public void println(Float o) { Logger.info(p(o)); }
-    public void println(Double o) { Logger.info(p(o)); }
-    public void println(Object o) { Logger.info(p(o)); }
+    public void println(String o) { Logger.info(o, c); }
+    public void println(Integer o) { Logger.info(o, c); }
+    public void println(Character o) { Logger.info(o, c); }
+    public void println(Long o) { Logger.info(o, c); }
+    public void println(Boolean o) { Logger.info(o, c); }
+    public void println(Float o) { Logger.info(o, c); }
+    public void println(Double o) { Logger.info(o, c); }
+    public void println(Object o) { Logger.info(o, c); }
 
-    private String p(Object o) {
-      return "[" + c + "] " + o;
-    }
   }
 }
