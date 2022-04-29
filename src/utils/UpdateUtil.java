@@ -22,11 +22,6 @@ public class UpdateUtil {
 
     if(!ConfigUtil.hasSection("updateutil")) {
       x.newCommentLine("NDOS Update Util - Configuration File");
-      x.newLine("");
-
-      x.newCommentLine("是否使用镜像源检查更新 (默认: false)");
-      x.newCommentLine("镜像源由 Vercel 提供 (链接: https://proxy-a.vercel.app/api/ )");
-      x.put("use-api-mirror", "false");
 
       x.newLine("");
 
@@ -44,7 +39,7 @@ public class UpdateUtil {
 
   public static void checkUpdate(boolean down) {
     init();
-    String apiAddr = x.get("use-api-mirror", "false").equals("true") ? "https://proxy-a.vercel.app/api" : "https://api.github.com" ;
+    String apiAddr = "https://api.github.com";
     String ghproxyAddr = x.get("use-ghproxy", "false").equals("true") ? "https://ghproxy.com/" : "" ;
 
     String mainPath = new NullClass().getClass().getProtectionDomain().getCodeSource().getLocation().getPath().split("!")[0];
