@@ -52,7 +52,7 @@ public class DynamicCompiler {
     contentList.add("import java.time.*;");
 
     for(String s : RawContentList) {
-      if(!s.startsWith("package")) contentList.add(s);
+      if(!s.trim().startsWith("package")) contentList.add(s);
     }
 
     String sourceContent = String.join("", contentList);
