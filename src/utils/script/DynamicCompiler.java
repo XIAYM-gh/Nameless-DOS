@@ -28,13 +28,31 @@ public class DynamicCompiler {
 
     DynamicJavaCompiler comp = new DynamicJavaCompiler(new NullClass().getClass().getClassLoader());
 
-    List<String> contentList;
+    List<String> RawContentList;
+    LinkedList<String> contentList = new LinkedList<>();
 
     try {
-      contentList = Files.readAllLines(f);
+      RawContentList = Files.readAllLines(f);
     } catch(IOException e) {
       Logger.err(Lang("sjava.io_err"));
       return;
+    }
+
+    // 默认导入以下内容
+    contentList.add("import cn.xiaym.utils.*;");
+    contentList.add("import cn.xiaym.ndos.*;");
+    contentList.add("import cn.xiaym.ndos.console.*;");
+    contentList.add("import cn.xiaym.ndos.plugins.*;");
+    contentList.add("import cn.xiaym.ndos.command.*;");
+    contentList.add("import java.io.*;");
+    contentList.add("import java.nio.*;");
+    contentList.add("import java.nio.charset.*;");
+    contentList.add("import java.nio.file.*;");
+    contentList.add("import java.util.*;");
+    contentList.add("import java.time.*;");
+
+    for(String s : RawContentList) {
+      if(!s.startsWith("package")) contentList.add(s);
     }
 
     String sourceContent = String.join("", contentList);

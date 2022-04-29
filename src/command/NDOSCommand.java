@@ -57,9 +57,11 @@ public class NDOSCommand {
     }
   }
 
-  //插件无法调用此方法
+  //插件及Java脚本无法调用此方法
   public static void clearAllCommands() {
-    if(PluginMain.isPluginClass(new Throwable().getStackTrace()[1].getClassName())) return;
+    String name = new Throwable().getStackTrace()[1].getClassName();
+
+    if(!name.startsWith("cn.xiaym.") || PluginMain.isPluginClass(name)) return;
 
     RegisteredCommands.clear();
     CommandUsage.clear();
