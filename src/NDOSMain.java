@@ -28,7 +28,7 @@ public class NDOSMain {
 
     Logger.init();
 
-    //AnsiConsole.systemInstall();
+    AnsiConsole.systemInstall();
     showInfo();
 
     ConfigUtil.init();
